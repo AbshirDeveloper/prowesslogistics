@@ -7,4 +7,22 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'prowess';
+
+// looged in?
+  pages = true;
+  login = false;
+  
+// admin?
+  em = true;
+  ad = false;
+
+  logout(){
+    this.login = true;
+    this.pages = false;
+  }
+
+  _login(){
+    this.pages = true;
+    this.login = false;
+  }
 }
