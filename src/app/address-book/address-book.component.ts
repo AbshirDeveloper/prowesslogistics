@@ -9,6 +9,12 @@ export class AddressBookComponent implements OnInit {
 
   constructor() { }
 
+  driver = true;
+
+  switch(){
+  this.driver = !this.driver;
+  }
+
   ngOnInit() {
   }
 
