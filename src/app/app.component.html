@@ -14,23 +14,24 @@
 				<a class="navbar-brand" href="#"><span>Prowess </span>Logistics</a>
 				<ul class="nav navbar-top-links navbar-right">
 					<li class="dropdown"><a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-						<em class="fa fa-bell"></em><span class="label label-danger">5</span>
+						<em class="fa fa-bell"></em><span class="label label-danger">3</span>
 					</a>
 						<ul class="dropdown-menu dropdown-alerts">
 							<li><a href="#">
-								<div><em class="fa fa-envelope"></em> 1 New Message
-									<span class="pull-right text-muted small">3 mins ago</span></div>
+								<div><em class="fa fa-bullhorn color-red"></em> Submit Load #424324
+									<span class="pull-right text-muted small">1 Day late</span></div>
 							</a></li>
 							<li class="divider"></li>
 							<li><a href="#">
-								<div><em class="fa fa-heart"></em> 12 New Likes
-									<span class="pull-right text-muted small">4 mins ago</span></div>
-							</a></li>
+									<div><em class="fa fa-bullhorn color-red"></em> Submit Load #424324
+										<span class="pull-right text-muted small">3 Days late</span></div>
+								</a></li>
 							<li class="divider"></li>
 							<li><a href="#">
-								<div><em class="fa fa-user"></em> 5 New Followers
-									<span class="pull-right text-muted small">4 mins ago</span></div>
-							</a></li>
+									<div><em class="fa fa-bullhorn color-red"></em> Submit Load #424324
+										<span class="pull-right text-muted small">1 Week late</span></div>
+								</a></li>
+							<li class="divider"></li>
 						</ul>
 					</li>
 				</ul>
@@ -51,32 +52,13 @@
 		</div>
 		<div class="divider"></div>
 		<ul class="nav">
-      		<li routerLinkActive="actived current"><a routerLink="/home"><em class="fa fa-dashboard">&nbsp;</em>Dashboard</a></li>
+      		<li routerLinkActive="actived current"><a routerLink="/home"><em class="fa fa-dashboard">&nbsp;</em> Dashboard</a></li>
 			<li routerLinkActive="actived current"><a routerLink="/addressBook"><em class="fa fa-address-book">&nbsp;</em> Address Book</a></li>
 			<li routerLinkActive="actived current"><a routerLink="/loads"><em class="fa fa-calendar">&nbsp;</em> Loads</a></li>
-			<li routerLinkActive="actived current"><a routerLink="/dispatch"><em class="fa fa-bar-chart">&nbsp;</em> Dispatch</a></li>
+			<li routerLinkActive="actived current"><a routerLink="/dispatch"><em class="fa fa-truck">&nbsp;</em> Dispatch</a></li>
 			<li routerLinkActive="actived current"><a routerLink="/accounts"><em class="fa fa-toggle-off">&nbsp;</em> Accounts</a></li>
-			<li routerLinkActive="actived current"><a routerLink="/reports"><em class="fa fa-clone">&nbsp;</em>Reports</a></li>
-			<li routerLinkActive="actived current" class="parent "><a data-toggle="collapse" routerLink="/deductions">
-				<em class="fa fa-navicon">&nbsp;</em> Deductions <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
-				</a>
-				<style>
-				.black {
-					color: black;
-				}
-				</style>
-				<ul class="children collapse" id="sub-item-1">
-					<li><a class="black" href="#">
-						<span class="fa fa-arrow-right" style="color: black">&nbsp;</span> <b style="color: black">Item 1</b> 
-					</a></li>
-					<li><a class="" href="#">
-						<span class="fa fa-arrow-right" style="color: black">&nbsp;</span> <b style="color: black">Item 2</b> 
-					</a></li>
-					<li><a class="" href="#">
-						<span class="fa fa-arrow-right" style="color: black">&nbsp;</span> <b style="color: black">Item 3</b> 
-					</a></li>
-				</ul>
-			</li>
+			<li routerLinkActive="actived current"><a routerLink="/reports"><em class="fa fa-clone">&nbsp;</em> Reports</a></li>
+			<li routerLinkActive="actived current"><a routerLink="/deductions"><em class="fa fa-minus-circle">&nbsp;</em> Deductions</a></li>
 			<li><a (click)="logout()"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
 		</ul>
 	</div><!--/.sidebar-->

@@ -11,6 +11,8 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { ReportsComponent } from './reports/reports.component';
 import { DeductionsComponent } from './deductions/deductions.component';
 import { HomeComponent } from './home/home.component';
+import { BankFeesComponent } from './bank-fees/bank-fees.component';
+import { ChargeBacksComponent } from './charge-backs/charge-backs.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,9 @@ import { HomeComponent } from './home/home.component';
     AccountsComponent,
     ReportsComponent,
     DeductionsComponent,
-    HomeComponent
+    HomeComponent,
+    BankFeesComponent,
+    ChargeBacksComponent
   ],
   imports: [
     BrowserModule,

@@ -8,6 +8,8 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { ReportsComponent } from './reports/reports.component';
 import { DeductionsComponent } from './deductions/deductions.component';
 import { HomeComponent } from './home/home.component';
+import { BankFeesComponent } from './bank-fees/bank-fees.component';
+import { ChargeBacksComponent } from './charge-backs/charge-backs.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent},
@@ -17,7 +19,13 @@ const routes: Routes = [
   { path: 'dispatch', component: DispatchComponent},
   { path: 'accounts', component: AccountsComponent},
   { path: 'reports', component: ReportsComponent},
-  { path: 'deductions', component: DeductionsComponent}
+  { path: 'deductions', component: DeductionsComponent,
+children: [
+      { path: '', component: DeductionsComponent },
+      { path: 'bankFees', component: BankFeesComponent },
+      { path: 'chargeBacks', component: ChargeBacksComponent }
+    ]
+}
 ];
 
 @NgModule({
