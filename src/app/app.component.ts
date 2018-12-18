@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ServiceService } from './utils/service.service'
 
 @Component({
   selector: 'app-root',
@@ -6,6 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  constructor (private service: ServiceService) {}
   title = 'prowess';
 
 // looged in?
@@ -21,8 +23,24 @@ export class AppComponent {
     this.pages = false;
   }
 
+  info = {
+    username: null,
+    password: null,
+    table: 'login', 
+  }
+
+  returned_response = null;
+
   _login(){
-    this.pages = true;
-    this.login = false;
+    this.service.post(this.info).subscribe(
+      log => {
+        this.returned_response = log;
+        debugger;
+        if(log === 'thisName'){
+          this.pages = true;
+          this.login = false;
+        }
+    }
+    )
   }
 }

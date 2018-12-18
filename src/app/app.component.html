@@ -52,13 +52,13 @@
 		</div>
 		<div class="divider"></div>
 		<ul class="nav">
-      		<li routerLinkActive="actived current"><a routerLink="/home"><em class="fa fa-dashboard">&nbsp;</em> Dashboard</a></li>
-			<li routerLinkActive="actived current"><a routerLink="/addressBook"><em class="fa fa-address-book">&nbsp;</em> Address Book</a></li>
-			<li routerLinkActive="actived current"><a routerLink="/loads"><em class="fa fa-calendar">&nbsp;</em> Loads</a></li>
-			<li routerLinkActive="actived current"><a routerLink="/dispatch"><em class="fa fa-truck">&nbsp;</em> Dispatch</a></li>
-			<li routerLinkActive="actived current"><a routerLink="/accounts"><em class="fa fa-toggle-off">&nbsp;</em> Accounts</a></li>
+      		<li routerLinkActive="actived current"><a routerLink="/dashboard"><em class="fa fa-dashboard">&nbsp;</em> Dashboard</a></li>
+			<li routerLinkActive="actived current"><a routerLink="/assets"><em class="fa fa-address-book">&nbsp;</em> Assets</a></li>
+			<li routerLinkActive="actived current"><a routerLink="/dispatch"><em class="fa fa-calendar">&nbsp;</em> Disptach</a></li>
+			<!-- <li routerLinkActive="actived current"><a routerLink="/dispatch"><em class="fa fa-truck">&nbsp;</em> Dispatch</a></li> -->
+			<li routerLinkActive="actived current"><a routerLink="/loads"><em class="fa fa-toggle-off">&nbsp;</em> Loads</a></li>
 			<li routerLinkActive="actived current"><a routerLink="/reports"><em class="fa fa-clone">&nbsp;</em> Reports</a></li>
-			<li routerLinkActive="actived current"><a routerLink="/deductions"><em class="fa fa-minus-circle">&nbsp;</em> Deductions</a></li>
+			<li routerLinkActive="actived current"><a routerLink="/deductions"><em class="fa fa-minus-circle">&nbsp;</em> Operations</a></li>
 			<li><a (click)="logout()"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
 		</ul>
 	</div><!--/.sidebar-->
@@ -81,10 +81,10 @@
 					<form role="form">
 						<fieldset>
 							<div class="form-group">
-								<input class="form-control" placeholder="E-mail" name="email" type="email" autofocus="">
+								<input class="form-control" placeholder="E-mail" name="email" type="email" [(ngModel)]="info.username" autofocus="">
 							</div>
 							<div class="form-group">
-								<input class="form-control" placeholder="Password" name="password" type="password" value="">
+								<input class="form-control" placeholder="Password" name="password" type="password" [(ngModel)]="info.password" value="">
 							</div>
 							<div class="checkbox">
 								<label>
@@ -97,9 +97,15 @@
 			</div>
 		</div><!-- /.col-->
 	</div><!-- /.row -->	
-	
-
-<script src="js/jquery-1.11.1.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+<script src="assets/js/jquery-1.11.1.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/jquery-1.11.1.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/chart.min.js"></script>
+<script src="assets/js/chart-data.js"></script>
+<script src="assets/js/easypiechart.js"></script>
+<script src="assets/js/easypiechart-data.js"></script>
+<script src="assets/js/bootstrap-datepicker.js"></script>
+<script src="assets/js/custom.js"></script>
 </body>
 </html>

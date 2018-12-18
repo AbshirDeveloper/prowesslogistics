@@ -13,11 +13,12 @@ import { ChargeBacksComponent } from './charge-backs/charge-backs.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent},
-  { path: 'home', component: HomeComponent},
-  { path: 'addressBook', component: AddressBookComponent},
-  { path: 'loads', component: LoadsComponent},
-  { path: 'dispatch', component: DispatchComponent},
-  { path: 'accounts', component: AccountsComponent},
+  { path: 'reroute', component: AddressBookComponent},
+  { path: 'dashboard', component: HomeComponent},
+  { path: 'assets', component: AddressBookComponent},
+  { path: 'dispatch', component: LoadsComponent},
+  { path: 'loadsOld', component: DispatchComponent},
+  { path: 'loads', component: AccountsComponent},
   { path: 'reports', component: ReportsComponent},
   { path: 'deductions', component: DeductionsComponent,
 children: [

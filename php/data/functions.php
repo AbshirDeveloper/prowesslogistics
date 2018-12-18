@@ -1,5 +1,7 @@
-<?php require_once("Database_connection.php"); 
+<?php require_once("database_connection.php"); 
 require_once("sessions.php"); 
+$password = 'Abshir26';
+$connection = connect_to_database($password);
 class everything {
 	
 public static function password_encrypt($password) {

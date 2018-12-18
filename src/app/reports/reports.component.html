@@ -1,3 +1,75 @@
-<p>
-  reports works!
-</p>
+<div class="container" style="width: 100%;">
+    <mat-form-field>
+        <input matInput [matDatepicker]="picker" placeholder="Start Date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field style="margin-left: 5%">
+        <input matInput [matDatepicker]="pickers" placeholder="End Date">
+        <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+        <mat-datepicker #pickers></mat-datepicker>
+    </mat-form-field>
+    <div style="margin-top: 4%">
+        <ul class="nav nav-tabs">
+            <li class={{overall_class}}><a (click)="switch()">Overall</a></li>
+            <li class={{driver_class}}><a (click)="switch()">Drivers</a></li>
+          </ul>
+        <div style="display: block; width: 40%; float: left;">
+          <canvas *ngIf="overall" baseChart
+                  [datasets]="barChartData"
+                  [labels]="barChartLabels"
+                  [options]="barChartOptions"
+                  [legend]="barChartLegend"
+                  [chartType]="barChartType"
+                  (chartHover)="chartHovered($event)"
+                  (chartClick)="chartClicked($event)"></canvas>
+          <canvas *ngIf="!overall" baseChart
+                  [datasets]="barChartDataDriver"
+                  [labels]="barChartLabels"
+                  [options]="barChartOptions"
+                  [legend]="barChartLegend"
+                  [chartType]="barChartType"
+                  (chartHover)="chartHovered($event)"
+                  (chartClick)="chartClicked($event)"></canvas>
+          <!-- <button (click)="randomize()">Update</button> -->
+        </div>
+      </div>
+      <div style="display: block; width: 40%; float: left;">
+          <canvas baseChart
+                  [data]="pieChartData"
+                  [labels]="pieChartLabels"
+                  [chartType]="pieChartType"
+                  (chartHover)="chartHovered($event)"
+                  (chartClick)="chartClicked($event)"></canvas>
+      </div>
+      <div>
+          <a href="#"><i class="fa fa-file-excel-o" style="font-size:48px;color:green"></i></a><br/><br/>
+          <a href="#"><i class="fa fa-file-pdf-o" style="font-size:48px;color:red"></i></a>
+      </div>
+  <br />
+<button class="collapsible">More Info</button>
+<div class="register">
+  <h2 style="float: right; margin-right: 0px">$400</h2>
+  <table class="rwd-table" style="margin-top: 1%; width: 100%">
+    <tr>
+      <th>Driver</th>
+      <th>Loads</th>
+      <th>Total Pay</th>
+      <th>Driver Pay</th>
+      <th>Prowess Pay</th>
+      <th>Deductions</th>
+      <th>Net Profit</th>
+    </tr>
+    <tr>
+      <td data-th="Movie Title">Abshir Jama</td>
+      <td data-th="Genre">55</td>
+      <td data-th="Year">$460,935,665</td>
+      <td data-th="Gross">$460,935</td>
+      <td data-th="Year">$460</td>
+      <td data-th="Gross"><a>$46</a></td>
+      <td data-th="Gross"><a>$400</a></td>
+    </tr>
+  </table>
+</div>
+      <script src="node_modules/chart.js/src/chart.js"></script>
+</div>

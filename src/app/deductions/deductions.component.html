@@ -1,3 +1,203 @@
-<p>
-  deductions works!
-</p>
+<div class="main">
+    <div class="one" style="float: left">
+        <button class="collapsible">Add Deduction</button>
+      <div class="register">
+        <h3>Deduction</h3>
+        <form id="reg-form">
+          <div>
+            <label for="description">Description</label>
+            <input type="text" id="description" spellcheck="false" placeholder="Description"/>
+          </div>
+          <div>
+            <label for="type">Type</label>
+            <input type="text" id="type" spellcheck="false" placeholder="Type of Deduction"/>
+          </div>
+          <div>
+            <label for="amount"><i>$</i></label>
+            <input type="text" id="amount" spellcheck="false" />
+          </div>
+          <div>
+              <label for="load"><i>Load # (if applies)</i></label>
+              <input type="text" id="load" spellcheck="false" placeholder="Load #"/>
+            </div>
+          <div>
+            <label for="password">Applies To</label>
+            <select name="applies" id="">
+              <option value="company">Prowess</option>
+              <option value="driver_one">Driver One</option>
+              <option value="driver_two">Driver One</option>
+            </select>
+            <!-- <input type="password" id="password" /> -->
+          </div>
+          <div>
+            <label></label>
+            <input type="submit" value="Add" id="create-account" class="button"/>
+          </div>
+          </form>
+      </div>
+      <br />
+      <button class="collapsibleTwo">Setup Commisions</button>
+      <div class="register">
+        <h3>Set load proportion</h3>
+        <form id="reg-form">
+          <div>
+            <label for="driver_percent">Driver Percent <i>%</i></label>
+            <input type="text" id="driver_percent" spellcheck="false"/>&nbsp;
+            <i>25%</i>
+          </div>
+          <div>
+            <label for="company_percent">Company Percent <i>%</i></label>
+            <input type="text" id="company_percent" spellcheck="false" placeholder="Type of Deduction"/>&nbsp;
+            <i>70%</i>
+          </div>
+          <div>
+            <label for="fixed_charges">Fixed Charges <i>%</i></label>
+            <input type="text" id="fixed_charges" spellcheck="false" />&nbsp;
+            <i>5%</i>
+          </div>
+          <div>
+            <label></label>
+            <input type="submit" value="Set" id="create-account" class="button"/>
+          </div>
+          </form>
+      </div>
+<br/>
+      <button class="collapsibleFive">Payments</button>
+      <div class="register">
+        <h3>Make Payments</h3>
+        <form id="reg-form">
+          <div>
+            <label for="driver_percent">Type</label>
+            <select name="type" id="">
+              <option value="payment">Actual Payment</option>
+              <option value="advance">Advance</option>
+            </select>
+            <!-- <input type="text" id="driver_percent" spellcheck="false"/>&nbsp;
+            <i>25%</i> -->
+          </div>
+          <div>
+            <label for="amount">Amount <i>$</i></label>
+            <input type="text" id="amount" spellcheck="false"/>&nbsp;
+          </div>
+          <div>
+              <label for="load">Load <i>#</i> (Optional)</label>
+              <input type="text" id="load" spellcheck="false"/>&nbsp;
+            </div>
+          <div>
+            <label for="fixed_charges">Driver</label>
+            <select name="drivers" id="">
+              <option value="driver_one">Abshir Jama #3124093514</option>
+              <option value="driver_two">Jamac Geedi #4654656656</option>
+            </select>
+          </div>
+          <div>
+            <label></label>
+            <input type="submit" value="Pay" id="create-account" class="button"/>
+          </div>
+          </form>
+      </div>
+<br/>
+      <button class="collapsibleSixth">Register Staff</button>
+      <div class="register">
+        <h3>Staff Registration</h3>
+        <form id="reg-form">
+          <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" spellcheck="false" placeholder="Full Name"/>&nbsp;
+          </div>
+          <div>
+              <label for="email">Email</label>
+              <input type="text" id="email" spellcheck="false" placeholder="example@mail.com"/>&nbsp;
+          </div>
+          <div>
+              <label for="phone">Phone</label>
+              <input type="text" id="phone" spellcheck="false" placeholder="Phone#"/>&nbsp;
+          </div>
+          <div>
+            <label></label>
+            <input type="submit" value="Register" id="create-account" class="button"/>
+          </div>
+          </form>
+      </div>
+    </div>
+    <div class="two" style="float: left">
+        <button class="collapsibleThree">Deductions</button>
+        <div class="register">
+        <table id="reg-form1" style="margin-top: 0px" class="table table-hover table-mc-light-blue">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Load #</th>
+                <th>Applied To</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-title="Status">Today</td>
+                <td data-title="ID">ChargeBack</td>
+                <td data-title="Name">$876</td>
+                <td data-title="Link">897987</td>
+                <td data-title="Status">Abshir jama #6565</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+    <br />
+        <button class="collapsibleFour">Payments</button>
+        <div class="register">
+        <table id="reg-form1" style="margin-top: 0px" class="table table-hover table-mc-light-blue">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Load #</th>
+                <th>Paid To</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-title="Status">Today</td>
+                <td data-title="ID">ChargeBack</td>
+                <td data-title="Name">$876</td>
+                <td data-title="Link">897987</td>
+                <td data-title="Status">Abshir jama #6565</td>
+              </tr>
+            </tbody>
+          </table>
+    </div>
+    <br />
+    <button class="collapsibleSeventh">Staff</button>
+    <div class="register">
+    <table id="reg-form1" style="margin-top: 0px" class="table table-hover table-mc-light-blue">
+        <thead>
+          <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone#</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-title="Status">Abshir jama</td>
+            <td data-title="ID">brotherabshir@gmail.com</td>
+            <td data-title="Name">3124093514</td>
+            <td data-title="Status">
+              <a style="color: green; font-weight: bold">Activate</a>
+            </td>
+          </tr>
+          <tr>
+              <td data-title="Status">Geedi Jama</td>
+              <td data-title="ID">example@mail.com</td>
+              <td data-title="Name">768768769</td>
+              <td data-title="Status">
+                <a style="color: red; font-weight: bold">Deactive</a>
+              </td>
+            </tr>
+        </tbody>
+      </table>
+</div>
+</div>

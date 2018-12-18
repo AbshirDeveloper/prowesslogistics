@@ -1,52 +1,226 @@
-
-<div class="container">
-  <ul class="nav nav-tabs">
-    <li class="active"><a (click)="switch()">Driver</a></li>
-    <li><a (click)="switch()">Dispatch</a></li>
-  </ul>
-  <form *ngIf="driver"> 
-      <div class="row">
-          <div class="col-halfs">
-            <h4>Please Choose an Option</h4>
-            <div class="input-group">
-              <input type="radio" name="type" value="Employee" id="gender-male"/>
-              <label for="gender-male">Employee</label>
-              <input type="radio" name="type" value="Contractor" id="gender-female"/>
-              <label for="gender-female">Contractor</label>
+<div class="main" style="width: 100%">
+  <div style="width: 100%">
+  <button class="collapsible">Driver Registration</button>
+  <div class="driver">
+    <div class="register">
+      <h3>Driver Registration Form</h3> <span>{{message}}</span>
+      <form ngNativeValidate (submit)="register_driver()" id="reg-form">
+        <div>
+          <label for="name">Name</label>
+          <input type="text" id="name" spellcheck="false" placeholder="Name" name="name" [(ngModel)]="driver_info.name" required/>
+          <label for="email">Email</label>
+          <input type="text" id="email" spellcheck="false" placeholder="example@email.com" name="email" [(ngModel)]="driver_info.email" (blur)="onBlurMethod()" required/>
+          <label for="status">Status</label>
+          <select name="status" id="" [(ngModel)]="driver_info.status" required>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <!-- <input type="text" id="username" spellcheck="false" placeholder="shree33" /> -->
+          <label for="dob">DOB</label>
+          <input type="date" id="dob" name="dob" [(ngModel)]="driver_info.dob" required/>
+          <label for="address">Full Address</label>
+          <input type="text" id="address" placeholder="Full Address" name="address" [(ngModel)]="driver_info.address" required/>
+          <label for="name">Phone</label>
+          <input type="tel" id="phone" spellcheck="false" placeholder="phone#" name="phone" [(ngModel)]="driver_info.phone" required/>
+          <label for="name">DL</label>
+          <input type="tel" id="phone" spellcheck="false" placeholder="Driver's license #" name="license" [(ngModel)]="driver_info.license" required/>
+          <label for="name">DL Expiration</label>
+          <input type="date" id="phone" spellcheck="false" name="dl_expiration" [(ngModel)]="driver_info.dl_expiration" required/>
+          <div class="sep">
+              <span class="or">...</span>
             </div>
+          <hr />
+          <label for="type">Driver Type</label>
+          <select name="type" id="" name="type" [(ngModel)]="driver_info.type" required>
+            <option value="contractor">Contractor</option>
+            <option value="employee">Employee</option>
+          </select>
+          <!-- <input type="text" id="email" spellcheck="false" placeholder="shridhardeshmukh@xyz.com"/> -->
+          <label for="id">Driver ID</label>
+          <input type="text" id="id" spellcheck="false" placeholder="Driver ID#" name="id" [(ngModel)]="driver_info.driver_id" required/>
+          <label for="experience">Experience</label>
+          <input type="text" id="experience" placeholder="Years or Months" name="experience" [(ngModel)]="driver_info.experience" required/>
+          <label for="expiration">DOT Medical card expiration</label>
+          <input type="date" id="expiration" name="expiration" [(ngModel)]="driver_info.dot_medical_card_expiration" required/>
+          <label for="name">Truck #</label>
+          <input type="text" id="hire_date" spellcheck="false" name="hire" [(ngModel)]="driver_info.truck_number" required/>
+          <label for="termination">Trailer #</label>
+          <input type="text" id="termination" spellcheck="false" name="termination" [(ngModel)]="driver_info.trailer_number" required/>
+          <div class="sep">
+              <span class="or">...</span>
+            </div>
+          <hr />
+          <label for="advance">Advance Money</label>
+          <select name="advance" id="" name="advance" [(ngModel)]="driver_info.advance_money_eligible" required>
+            <option value="eligible">Eligible</option>
+            <option value="not-eligible">Not Eligible</option>
+          </select>
+          <!-- <input type="text" id="username" spellcheck="false" placeholder="shree33" /> -->
+          <label for="insurance">Driver Insurance #</label>
+          <input type="text" id="insurance" placeholder="Driver insurance #" name="insurance" [(ngModel)]="driver_info.driver_insurance" required/>
+          <label for="company">Insurance Company</label>
+          <input type="text" id="insu_company" placeholder="Insurance Company Name" name="company" [(ngModel)]="driver_info.insurance_company" required/>
+          <label for="expire">Insurance Expiration</label>
+          <input type="date" id="expire" spellcheck="false" name="expiration_date" [(ngModel)]="driver_info.insurance_expiration_date" required/>
+          <label for="group_no">Group No:</label>
+          <input type="text" id="group_no" spellcheck="false" placeholder="Group #" name="group" [(ngModel)]="driver_info.group_no" required/>
+          <label for="id">ID no:</label>
+          <input type="text" id="id" spellcheck="false" placeholder="ID no:" name="id_number" [(ngModel)]="driver_info.id_no" required/>
+          <!-- <label for="password">Password</label>
+          <input type="password" id="password" />
+          <label for="password-again">Password Again</label>
+          <input type="password" id="password-again" /> -->
+          <label></label>
+          <input type="submit" value="Register Driver" id="create-account" class="button"/>
+        </div>
+      </form>
+  </div>
+  </div>
+  <br />
+  <button class="collapsibleTwo">Broker Registration</button>
+  <div class="dispatcher">
+  <div class="register">
+      <h3>Broker Registration Form</h3>
+      <form ngNativeValidate id="reg-form" (submit)="register_broker()">
+        <div>
+          <label for="name">Broker Type</label>
+          <select name="type" id="" name="broker" [(ngModel)]="dispatcher_info.broker_type" required>
+            <option value="company">Company</option>
+            <option value="individual">Individual</option>
+          </select>
+          <div class="sep">
+              <span class="or">...</span>
+          </div>
+          <!-- <input type="text" id="name" spellcheck="false" placeholder="Shridhar Deshmukh"/> -->
+          <label for="dba">DBA Name</label>
+          <input type="text" id="dba" spellcheck="false" placeholder="DBA Name" name="dba" [(ngModel)]="dispatcher_info.dba_name" required/>
+          <label for="contact">Contact Name</label>
+          <input type="text" id="contance" spellcheck="false" placeholder="Contact Name" name="dba" [(ngModel)]="dispatcher_info.contact_name" required/>
+          <label for="ein">EIN</label>
+          <input type="text" id="ein" placeholder="EIN" name="ein" [(ngModel)]="dispatcher_info.ein" required/>
+          <label for="mc">MC Number</label>
+          <input type="text" id="mc" placeholder="MC #" name="mc" [(ngModel)]="dispatcher_info.mc_number" required/>
+          <label for="dot">US DOT #</label>
+          <input type="text" id="dot" spellcheck="false" placeholder="US DOT #" name="dot" [(ngModel)]="dispatcher_info.us_dot_no" required/>
+          <label for="account">Account #</label>
+          <input type="text" id="account" spellcheck="false" placeholder="Account #" name="acount" [(ngModel)]="dispatcher_info.account_number" required/>
+          <label for="email">Email</label>
+          <input type="text" id="email" spellcheck="false" placeholder="example@mail.com" name="email" [(ngModel)]="dispatcher_info.email" required/>
+          <label for="phone">phone#</label>
+          <input type="text" id="phone" spellcheck="false" placeholder="Phone #" name="phone" [(ngModel)]="dispatcher_info.phone" required/>
+          <label></label>
+          <input type="submit" value="Register Broker" id="create-account" class="button"/>
+          <div class="sep">
+              <span class="or">...</span>
           </div>
         </div>
-    <div class="row">
-      <h4>Driver's Info</h4>
-      <div class="input-group input-group-icon">
-        <input type="text" placeholder="Full Name"/>
-        <div class="input-icon"><i class="fa fa-user"></i></div>
+        </form>
+        <div class="table-responsive-vertical shadow-z-1">
+            <table id="table" class="table table-hover table-mc-light-blue">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Broker Type</th>
+                    <th>DBA Name</th>
+                    <th>Contact Name</th>
+                    <th>EIN</th>
+                    <th>MC Number</th>
+                    <th>US DOT #</th>
+                    <th>Account #</th>
+                    <th>Email</th>
+                    <th>Phone #</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let x of brokerList">
+                    <td data-title="Status">{{x.date}}</td>
+                    <td data-title="ID">{{x.broker_type}}</td>
+                    <td data-title="Name">{{x.dba_name}}</td>
+                    <td data-title="Link">{{x.contact_name}}</td>
+                    <td data-title="Status">{{x.ein}}</td>
+                    <td data-title="Status">{{x.mc_number}}</td>
+                    <td data-title="Status">{{x.us_dot_no}}</td>
+                    <td data-title="Status">{{x.account_number}}</td>
+                    <td data-title="Status">{{x.email}}</td>
+                    <td data-title="Status">{{x.phone}}</td>
+                    <td data-title="Status">&nbsp;
+                      <i (click)="setForDelet(x.id, 'dispatcher')" style="color: red" class="fa fa-trash" aria-hidden="true"></i></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+  </div>
+  </div>
+  <hr />
+<form>
+      <input style="width: 30%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" type="text" placeholder=" Search..." name="search" [(ngModel)]="search"/>
+</form>
+  <div class="table-responsive-vertical shadow-z-1">
+      <table id="table" class="table table-hover table-mc-light-blue">
+          <thead>
+            <tr>
+              <th>Registered Date</th>
+              <th>Name/Description</th>
+              <th>Type</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Truck# (if any)</th>
+              <th>Trailer# (if any)</th>
+              <th>Action (if Driver)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let x of driverList | filter:search">
+              <td data-title="ID">{{x.date}}</td>
+              <td data-title="Name"><a (click)="pops(1)" style="color:blue">{{x.name}}</a></td>
+              <td data-title="Link">{{x.type}}</td>
+              <td data-title="Status">{{x.email}}</td>
+              <td data-title="Status">{{x.phone}}</td>
+              <td data-title="Status">{{x.truck_number}}</td>
+              <td data-title="Status">{{x.trailer_number}}</td>
+              <td data-title="Status" style="color: blue; font-weight: bold; font-size: 20px">
+                &nbsp;
+                <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="input-group input-group-icon">
-        <input type="text" placeholder="Driver's license"/>
-        <div class="input-icon"><i class="fa fa-id-card-o"></i></div>
+  </div>
+</div>
+<div id="myEdit2" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <button (click)="pop_close()" class="close">&times;</button>
+    <!DOCTYPE html>
+    <html lang="en">
+    <body>
+    <div style="text-align: center; padding-right: 0%; padding-left: 0%; width: 100%" class="container">
+    <!-- <table class="table table-striped">
+         <thead>
+           <tr>
+             <th>Date</th>
+             <th>Description</th>
+             <th>Amount</th>
+             <th>Credit</th>
+             <th>Balance</th>
+             <th>Initials</th>
+           </tr>
+         </thead>
+         <tbody>
+           <tr>
+             <td>date</td>
+             <td>some description</td>
+             <td>something else</td>
+             <td>something else</td>
+             <td>something else</td>
+             <td>something else</td>
+           </tr>
+         </tbody>
+       </table> -->
       </div>
-      <div class="input-group input-group-icon">
-        <input type="text" placeholder="ID"/>
-        <div class="input-icon"><i class="fa fa-user"></i></div>
-      </div>
-      <div class="input-group input-group-icon">
-        <input type="email" placeholder="Email Adress"/>
-        <div class="input-icon"><i class="fa fa-envelope"></i></div>
-      </div>
-      <div class="input-group input-group-icon">
-        <input type="tel" placeholder="Phone#"/>
-        <div class="input-icon"><i class="fa fa-phone"></i></div>
-      </div><br />
-    </div>
-    <div class="row">
-        <h4>Owneship</h4>
-        <div class="input-group">
-          <input type="checkbox" id="terms"/>
-          <label for="terms">Owner?</label>
-        </div>
-    </div>
-    <button class="btn btn-success">Register</button>
-    <button class="btn btn-warning">Clear</button>
-  </form>
+    </body>
+    </html>
+  </div>
 </div>
