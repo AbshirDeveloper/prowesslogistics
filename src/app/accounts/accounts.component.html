@@ -1,10 +1,13 @@
+
   <form>
         <input type="text" placeholder=" Search..." />
   </form>
   <div class="table-responsive-vertical shadow-z-1">
+      <button *ngIf="selected_loads.length > 1" style="float:right; width: 10%; color: black;" class="btn btn-success">Bill {{selected_loads.length}} loads</button>
   <table id="table" class="table table-hover table-mc-light-blue">
       <thead>
         <tr>
+          <th>Select</th>
           <th>Load#</th>
           <th>P/L & Time</th>
           <th>D/L & Time</th>
@@ -18,7 +21,8 @@
         </tr>
       </thead>
       <tbody *ngFor="let x of loads">
-        <tr *ngIf="x.billed !== 'Yup' && x.status === 'Delivered'" style="background-color:rgb(238, 219, 212); color:black">
+        <tr *ngIf="x.billed !== 'Yup' && today > x.epoch" style="background-color:rgb(238, 219, 212); color:black">
+          <td data-title="ID"><input data-title="ID" type="checkbox" name="selection" [(ngModel)]="x.selected" (change)="selected()" id="" enabled></td>
           <td data-title="ID">{{x.ref_id}}</td>
           <td data-title="Name">{{x.pick_up}}<span style="display:block">{{x.pick_up_date | date:'medium'}}</span></td>
           <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
@@ -27,10 +31,11 @@
           <td data-title="Status">{{x.truck_number}}</td>
           <td data-title="Status">{{x.trailer_number}}</td>
           <td data-title="Status">{{x.status}}</td>
-          <td data-title="Status"><a style="color: red">{{x.billed}}</a></td>
+          <td data-title="Status"><i style="color: red">{{x.billed}}</i></td>
           <td data-title="Status"><a style="font-weight:bold" (click)="pops(1)">Bill It Now</a></td>
         </tr>
-        <tr *ngIf="x.billed === 'Yup' && x.status === 'Delivered'">
+        <tr *ngIf="x.billed === 'Yup' && today > x.epoch">
+          <td data-title="ID"><input data-title="ID" type="checkbox" name="" id="" disabled></td>
           <td data-title="ID">{{x.ref_id}}</td>
           <td data-title="Name">{{x.pick_up}}<span style="display:block">{{x.pick_up_date | date:'medium'}}</span></td>
           <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
@@ -39,7 +44,7 @@
           <td data-title="Status">{{x.truck_number}}</td>
           <td data-title="Status">{{x.trailer_number}}</td>
           <td data-title="Status">{{x.status}}</td>
-          <td style="color: green" data-title="Status">Yup</td>
+          <td style="color: green" data-title="Status"><i style="color: green">{{x.billed}}</i></td>
           <td data-title="Status"><a (click)="pops(1)">View</a></td>
         </tr>
       </tbody>

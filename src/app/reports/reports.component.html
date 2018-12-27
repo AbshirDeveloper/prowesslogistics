@@ -13,7 +13,7 @@
         <ul class="nav nav-tabs">
             <li class={{overall_class}}><a (click)="switch()">Overall</a></li>
             <li class={{driver_class}}><a (click)="switch()">Drivers</a></li>
-          </ul>
+        </ul>
         <div style="display: block; width: 40%; float: left;">
           <canvas *ngIf="overall" baseChart
                   [datasets]="barChartData"
@@ -49,27 +49,60 @@
   <br />
 <button class="collapsible">More Info</button>
 <div class="register">
-  <h2 style="float: right; margin-right: 0px">$400</h2>
+  <h2 style="float: right; margin-right: 0px">{{total | currency}}</h2>
   <table class="rwd-table" style="margin-top: 1%; width: 100%">
     <tr>
       <th>Driver</th>
-      <th>Loads</th>
-      <th>Total Pay</th>
-      <th>Driver Pay</th>
-      <th>Prowess Pay</th>
-      <th>Deductions</th>
-      <th>Net Profit</th>
+      <th>Total Loads</th>
+      <th>Broker Amount</th>
+      <th>D. Deductions</th>
+      <th>Driver Net Pay</th>
+      <th>C. Deductions</th>
+      <th>Final</th>
     </tr>
-    <tr>
-      <td data-th="Movie Title">Abshir Jama</td>
-      <td data-th="Genre">55</td>
-      <td data-th="Year">$460,935,665</td>
-      <td data-th="Gross">$460,935</td>
-      <td data-th="Year">$460</td>
-      <td data-th="Gross"><a>$46</a></td>
-      <td data-th="Gross"><a>$400</a></td>
+    <tr *ngFor="let x of allDriversSummary">
+      <td data-th="Movie Title"><a (click)="pops(1)">{{x.driverName}}</a></td>
+      <td data-th="Genre">{{x.totaLoads}}</td>
+      <td data-th="Year">{{x.totalCharge | currency }}</td>
+      <td data-th="Gross"><a>{{x.expenses | currency }}</a></td>
+      <td data-th="Year">{{x.netPay | currency }}</td>
+      <td data-th="Year"><a>{{x.deductions | currency }}</a></td>
+      <td data-th="Gross">{{x.final | currency }}</td>
     </tr>
   </table>
 </div>
       <script src="node_modules/chart.js/src/chart.js"></script>
+</div>
+<div id="myEdit2" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+      <button (click)="pop_close()" class="close">&times;</button> <br/><br>
+      <h2><span style="color: blue;">Abshir Jama</span> | 2247636417</h2>
+    <div class="table-responsive-vertical shadow-z-1">
+          <table id="table" class="table table-hover table-mc-light-blue">
+              <thead>
+                <tr>
+                  <th>Load #</th>
+                  <th>Pick Up</th>
+                  <th>Drop Off</th>
+                  <th>Broker Amount</th>
+                  <th>Driver Deductions</th>
+                  <th>Driver Pay</th>
+                  <th>Billed ?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td data-title="ID">46546</td>
+                  <td data-title="Name">Location <span style="display:block">Date</span></td>
+                  <td data-title="Link">Location<span style="display:block">Date</span></td>
+                  <td data-title="Status">$8978</td>
+                  <td data-title="Status">$878</td>
+                  <td data-title="Status">$878</td>
+                  <td data-title="Status">Yes</td>
+                </tr>
+              </tbody>
+            </table>
+      </div>
+  </div>
 </div>

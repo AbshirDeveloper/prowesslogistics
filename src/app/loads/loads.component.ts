@@ -13,16 +13,19 @@ export class LoadsComponent implements OnInit {
   load = {};
   loads = [];
   drivers = [];
-  selected_driver = {};
+  selected_driver = [];
+  selected_carrier = [];
+  carriers = [];
   search;
   error;
   search_drop;
   selected_load = {};
   assignment = {};
+  today = Date.now();
   find_drop(){
     this.error = null;
     this.search = null
-    this.selected_driver = {};
+    this.selected_driver = [];
     this.service.get().subscribe(
       data => {
         data[0].forEach(element => {
@@ -34,17 +37,26 @@ export class LoadsComponent implements OnInit {
     )
   }
   assign(){
+    if(this.driver === 'active'){
     this.assignment = {
       driver: this.selected_driver,
       load: this.selected_load
     }
+  } else {
+    this.assignment = {
+      carrier: this.selected_carrier,
+      load: this.selected_load
+    }
+  }
     this.service.post(this.assignment).subscribe(
       data => {},()=> this.ngOnInit())
+      this.pop_close();
   }
   find(){
+    if(this.driver === 'active'){
     this.error = null;
     this.search_drop = null
-    this.selected_driver = {};
+    this.selected_driver = [];
     if(this.search.length > 0){
     this.service.get().subscribe(
       data => {
@@ -57,6 +69,17 @@ export class LoadsComponent implements OnInit {
         });
     }
     )
+    }
+  } else {
+    this.service.get().subscribe(
+      data => {
+        data[3].forEach(element => {
+          if(element.id === this.search_drop){
+            this.selected_carrier = element;
+          }
+        });
+    }
+    )
   }
   }
   getData(){
@@ -64,6 +87,7 @@ export class LoadsComponent implements OnInit {
       data => {
         this.loads = data[2];
         this.drivers = data[0];
+        this.carriers = data[3];
     }
     )
   }
@@ -86,17 +110,28 @@ export class LoadsComponent implements OnInit {
   }
 
   register_load(){
+    if(this.load['delivery_time'] && new Date(this.load['delivery_time']).getTime() > new Date(this.load['pick_up_date']).getTime()){
     this.service.post(this.load).subscribe(
       data => {},()=> this.ngOnInit())
-      // this.load = {};
+      this.load = {};
+    } else {
+      alert('please check the pick up and the drop dates');
+      return false;
+    }
   }
-
+  pickup;
+  dropp;
   pops(id){
+    this.search_drop = null;
+    this.selected_driver = [];
+    this.selected_carrier = [];
       this.service.get().subscribe(
         data => {
           data[2].forEach(element => {
             if(element.id === id){
               this.selected_load = element;
+              this.pickup = new Date(element.pick_up_date).getTime();
+              this.dropp = new Date(element.delivery_time).getTime();
             }
           });
       }
@@ -130,8 +165,52 @@ export class LoadsComponent implements OnInit {
     }
     this.service.post(this.unassign_info).subscribe(
       data => {},()=> this.ngOnInit())
+      this.pop_close();
   }
+  driver;
+  carrier;
+  switchToDriver(){
+      this.carrier = '';
+      this.driver = 'active'; 
+      document.getElementById('driver').style.display = 'block';
+      document.getElementById('carrier').style.display = 'none';
+    }
+
+    switchToCarrier(){
+        this.carrier = 'active';
+        this.driver = ''; 
+        document.getElementById('driver').style.display = 'none';
+        document.getElementById('carrier').style.display = 'block';
+      }
+
+  disabled;
+  loadTime = 'current';
+  loadTimeChanged(){
+    this.check_pickup();
+    this.check_delivery();
+  }
+   check_pickup(){
+     if(this.loadTime === 'current'){
+    new Date(this.load['pick_up_date']).getTime() <= this.today ? document.getElementById('pick_error').style.display = 'block' : document.getElementById('pick_error').style.display = 'none'
+    new Date(this.load['pick_up_date']).getTime() > this.today ? this.disabled = false : this.disabled = true;
+     } else {
+      document.getElementById('pick_error').style.display = 'none'
+     }
+   }
+
+   check_delivery(){
+    if(this.loadTime === 'current'){
+    (new Date(this.load['load.delivery_time']).getTime() <= this.today || new Date(this.load['load.delivery_time']).getTime() < new Date(this.load['pick_up_date']).getTime()) ? document.getElementById('drop_error').style.display = 'block' : document.getElementById('drop_error').style.display = 'none'
+    } else {
+    new Date(this.load['load.delivery_time']).getTime() < new Date(this.load['pick_up_date']).getTime() ? document.getElementById('drop_error').style.display = 'block' : document.getElementById('drop_error').style.display = 'none'
+    new Date(this.load['pick_up_date']).getTime() ? this.disabled = false : this.disabled = true;
+    }
+   }
   ngOnInit() {
+    this.switchToDriver();
+    this.load['status'] = 'Needs Driver';
+    this.load['charge'] = 0;
+    this.load['miles'] = 0;
     this.getData();
     for (this.i = 0; this.i < this.coll.length; this.i++) {
       this.coll[this.i].addEventListener("click", function() {

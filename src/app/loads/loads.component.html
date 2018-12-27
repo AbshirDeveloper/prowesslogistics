@@ -4,13 +4,17 @@
         <button class="collapsible">New Load</button>
       <div class="register">
         <h3>Create Load</h3>
+        <select name="loadTime" id="loadTime" [(ngModel)]="loadTime" (change)="loadTimeChanged()">
+          <option value="current">Current Load</option>
+          <option value="past">Past Load</option>
+        </select>
       <form ngNativeValidate id="reg-form" (submit)="register_load()">
           <div>
             <label for="name">Load Status</label>
             <select name="status" id="" [(ngModel)]="load.status" required>
               <optgroup label="Planning">
+                  <option value="Needs Driver">Needs Driver</option>
                 <option value="Needs Carrier">Needs Carrier</option>
-                <option value=" Needs Driver">Needs Driver</option>
                 <option value="Waiting Confirmation">Waiting Confirmation</option>
               </optgroup>
               <option value="planning">Active Load</option>
@@ -55,8 +59,9 @@
             <input type="text" id="shipper" spellcheck="false" placeholder="Shipper" name="shipper" [(ngModel)]="load.shipper" required/>
             <label for="pickup">Pick Up Location</label>
             <input type="text" id="pickup" spellcheck="false" placeholder="Pick Up Location" name="pick_up" [(ngModel)]="load.pick_up" required/>
+            <p id="pick_error" class="fa fa-warning" style="width: 100%; color: red; margin-left: 20%; display: none"> Pick up date should be greater than today</p>
             <label for="pickup_date">Pick Up Date & Time</label>
-            <input type="datetime-local" id="pickup_date" name="pick_up_date" [(ngModel)]="load.pick_up_date" required/>
+            <input type="datetime-local" id="pickup_date" name="pick_up_date" [(ngModel)]="load.pick_up_date" (blur)="check_pickup()" required/>
             <label for="pickup_note">Notes</label>
             <textarea name="pickup_notes" id="" cols="40" rows="1" name="shipper_notes" [(ngModel)]="load.shipper_notes"></textarea>
             <label for="contact_person">Contact Person</label>
@@ -70,8 +75,9 @@
             <input type="text" id="receiver" spellcheck="false" placeholder="Receiver" name="receiver" [(ngModel)]="load.receiver" required/>
             <label for="drop_off">Drop Off Location</label>
             <input type="text" id="drop_off" spellcheck="false" placeholder="Drop Off Location" name="drop_off" [(ngModel)]="load.drop_off" required/>
+            <p id="drop_error" class="fa fa-warning" style="width: 100%; color: red; margin-left: 20%; display: none"> Delivery date should be greater than pickup date</p>
             <label for="delivery_date">Deliver Date & Time</label>
-            <input type="datetime-local" id="delivery_date" name="delivery_time" [(ngModel)]="load.delivery_time" required/>
+            <input type="datetime-local" id="delivery_date" name="delivery_time" [(ngModel)]="load.delivery_time" (blur)="check_delivery()" disabled={{disabled}} required/>
             <label for="instructions">Instructions</label>
             <textarea name="instructions" id="" cols="40" rows="1" name="instructions" [(ngModel)]="load.instructions"></textarea>
             <label for="contact_person_delivery">Contact Person at Delivery</label>
@@ -89,7 +95,7 @@
             <label *ngIf="perMile" for="instructions"><i>Miles</i></label>
             <input *ngIf="perMile" type="text" name="miles" [(ngModel)]="load.miles" required/>
             <label for="instructions"><i>$</i></label>
-            <input type="text" name="charge" [(ngModel)]="load.charge" (blur)="calculate()" required/>
+            <input type="text" name="charge" [(ngModel)]="load.charge" (change)="calculate()" required/>
             <label style="color:seagreen; font-size: large;">${{total}}</label><br />
             <input style="float:right" type="submit" value="Create Load" id="create-account" class="button" required/>
           </div>
@@ -110,7 +116,7 @@
                 </tr>
               </thead>
               <tbody *ngFor="let x of loads">
-                <tr *ngIf="x.status !== 'On the Way' && x.status !== 'Delivered' && x.status !== 'Assigned'" style="background-color:rgb(204, 222, 228);">
+                <tr *ngIf="x.assigned === '0'" style="background-color:rgb(204, 222, 228);">
                   <td data-title="ID">{{x.ref_id}}</td>
                   <td data-title="Name">{{x.pick_up}}<span style="display:block">{{x.pick_up_date | date:'medium'}}</span></td>
                   <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
@@ -122,7 +128,7 @@
                     <i (click)="setForDelete(x.id, 'loads')" style="color: red; font-size:x-large" class="fa fa-trash" aria-hidden="true"></i>
                   </td>
                 </tr>
-                <tr *ngIf="x.status == 'Assigned'">
+                <tr *ngIf="x.assigned !== '0'">
                   <td data-title="ID">{{x.ref_id}}</td>
                   <td data-title="Name">{{x.pick_up}}<span style="display:block">{{x.pick_up_date | date:'medium'}}</span></td>
                   <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
@@ -140,22 +146,22 @@
       <!-- Modal content -->
       <div class="modal-content" style="height: 1000px;">
               <h2>{{selected_load.status | titlecase}}</h2>
-              <div *ngIf="selected_load.status !== 'On the Way' && selected_load.status !== 'Delivered' && selected_load.status !== 'Assigned'" class="progress" style="height: 6%;">
+              <div *ngIf="selected_load.assigned === '0'" class="progress" style="height: 6%;">
                 <div class="progress-bar" role="progressbar" aria-valuenow="25" aria-valuemin="4" aria-valuemax="100" style="width:25%; height: 100%; font-size: 50px; padding-top: 2%; background-color:rgb(193, 230, 193)">
                   25%
                 </div>
               </div>
-              <div *ngIf="selected_load.status === 'Assigned'" class="progress" style="height: 6%;">
+              <div *ngIf="selected_load.assigned !== '0' && pickup > today && dropp > today" class="progress" style="height: 6%;">
                   <div class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="4" aria-valuemax="100" style="width:50%; height: 100%; font-size: 50px; padding-top: 2%; background-color:rgb(197, 221, 150)">
                     50%
                   </div>
               </div>
-              <div *ngIf="selected_load.status === 'On the way'" class="progress" style="height: 6%;">
+              <div *ngIf="selected_load.assigned !== '0' && pickup < today && dropp > today" class="progress" style="height: 6%;">
                   <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="4" aria-valuemax="100" style="width:75%; height: 100%; font-size: 50px; padding-top: 2%; background-color:rgb(101, 218, 101)">
                     75%
               </div>
               </div>
-              <div *ngIf="selected_load.status === 'Delivered'" class="progress" style="height: 6%;">
+              <div *ngIf="selected_load.assigned !== '0' && dropp < today" class="progress" style="height: 6%;">
                   <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="4" aria-valuemax="100" style="width:100%; height: 100%; font-size: 50px; padding-top: 2%; background-color:rgb(10, 226, 10)">
                     100%
               </div>
@@ -275,9 +281,73 @@
                 <div class="sep">
                     <span class="or">.</span>
                 </div>
-                <label *ngIf="selected_load.status === 'Unassigned'" for="">Remarks: </label>
-                <span *ngIf="selected_load.status === 'Unassigned'"> {{selected_load.comments}}</span> <br>
-                <div *ngIf="selected_load.status !== 'On the Way' && selected_load.status !== 'Delivered' && selected_load.status !== 'Assigned'" style="border:solid">
+            <div>
+                <ul *ngIf="selected_load.assigned === '0'" class="nav nav-tabs">
+                    <li class={{driver}}><a (click)="switchToDriver()">Assign to a Driver</a></li>
+                    <li class={{carrier}}><a (click)="switchToCarrier()">Assign to a Carrier</a></li>
+                </ul>
+              <div id="carrier">
+              
+
+                  <label *ngIf="selected_load.status === 'Unassigned'" for="">Remarks: </label>
+                  <span *ngIf="selected_load.status === 'Unassigned'"> {{selected_load.comments}}</span> <br>
+                  <div *ngIf="selected_load.status !== 'On the Way' && selected_load.status !== 'Delivered' && selected_load.status !== 'Assigned'" style="border:solid">
+                  <form action="" ngNativeValidate id="reg-form">
+                    <table id="tables" style="width: 50%; float:left" class="table table-hover table-mc-light-blue">
+                    <tr>
+                    <th for="search">Select a carrier: </th>
+                    </tr>
+                    <tr>
+                    <td>
+                        <select (change)="find()" name="search_drop" id="" style="width: 100%" [(ngModel)]="search_drop">
+                          <option *ngFor="let x of carriers" value="{{x.id}}">{{x.company_name | titlecase }} <span>(</span> <span>{{x.contact_name | titlecase }}</span> <span>)</span> </option>
+                        </select>
+                    </td>
+                  </tr>
+                  </table>
+                  </form>
+                  <table id="tables" style="width: 50%; float:left" class="table table-hover table-mc-light-blue">
+                      <tr>
+                        <th>Company Name: </th>
+                        <td>{{selected_carrier.company_name | titlecase}}</td>
+                      </tr>
+                      <tr>
+                          <th>Contact Person: </th>
+                          <td>{{selected_carrier.contact_name}}</td>
+                      </tr>
+                      <tr>
+                          <th>Phone#: </th>
+                          <td>{{selected_carrier.phone}}</td>
+                      </tr>  
+                      <button class="btn btn-success" (click)="assign()">Assign</button>
+                  </table>
+                  </div>
+                  <table *ngIf="selected_load.status === 'On the Way' || selected_load.status === 'Delivered' || selected_load.status === 'Assigned'" id="tables" style="width: 50%; float:left;" class="table table-hover table-mc-light-blue">
+                      <tr>
+                        <th>Driver: </th>
+                        <td style="width: 50%; float:left; font-weight: bold; color: navy">{{selected_load.driver | titlecase}}</td>
+                      </tr>
+                      <tr>
+                        <th>Truck Number: </th>
+                        <td style="width: 50%; float:left; font-weight: bold; color: navy">{{selected_load.truck_number}}</td>
+                      </tr>
+                      <tr>
+                        <th>Trailer: </th>
+                        <td style="width: 50%; float:left; font-weight: bold; color: navy">{{selected_load.trailer_number}}</td>
+                      </tr>
+                </table>
+                <form ngNativeValidate *ngIf="selected_load.status === 'Assigned'">
+                    <textarea name="comments" placeholder="Add comments to unassign" id="" cols="60" rows="3" [(ngModel)]="comments" required></textarea>
+                    <button class="btn btn-warning" (click)="unassign(selected_load.id, comments)">Unassign!</button>
+                </form>
+
+
+
+              </div>
+              <div id="driver">
+                <label *ngIf="selected_load.assigned === '0'" for="">Remarks: </label>
+                <span *ngIf="selected_load.assigned === '0'"> {{selected_load.comments}}</span> <br>
+                <div *ngIf="selected_load.assigned === '0'" style="border:solid">
                 <form action="" ngNativeValidate id="reg-form">
                   <table id="tables" style="width: 50%; float:left" class="table table-hover table-mc-light-blue">
                   <tr>
@@ -286,8 +356,8 @@
                   </tr>
                   <tr>
                   <td>
-                      <select (change)="find_drop()" name="search_drop" id="" style="width: 100%" *ngFor="let x of drivers" [(ngModel)]="search_drop">
-                        <option value="{{x.name}}">{{x.name | titlecase }}</option>
+                      <select (change)="find_drop()" name="search_drop" id="" style="width: 100%" [(ngModel)]="search_drop">
+                        <option *ngFor="let x of drivers" value="{{x.name}}">{{x.name | titlecase }}</option>
                       </select>
                   </td>
                   <td><input tabindex="-1" (change)="find()" style="width: 100%; padding: 5px; font-size: 0.9em; border-radius: 5px; background: rgba(0, 0, 0, 0.07);" type="text" id="search" spellcheck="false" placeholder="Search..." name="search" [(ngModel)]="search"/>
@@ -312,7 +382,7 @@
                     <button class="btn btn-success" (click)="assign()">Assign</button>
                 </table>
                 </div>
-                <table *ngIf="selected_load.status === 'On the Way' || selected_load.status === 'Delivered' || selected_load.status === 'Assigned'" id="tables" style="width: 50%; float:left;" class="table table-hover table-mc-light-blue">
+                <table *ngIf="selected_load.assigned !== '0' && selected_load.driver !== 'Not assigned'" id="tables" style="width: 50%; float:left;" class="table table-hover table-mc-light-blue">
                     <tr>
                       <th>Driver: </th>
                       <td style="width: 50%; float:left; font-weight: bold; color: navy">{{selected_load.driver | titlecase}}</td>
@@ -326,9 +396,25 @@
                       <td style="width: 50%; float:left; font-weight: bold; color: navy">{{selected_load.trailer_number}}</td>
                     </tr>
               </table>
-              <form ngNativeValidate *ngIf="selected_load.status === 'Assigned'">
+              <table *ngIf="selected_load.assigned !== '0' && selected_load.driver === 'Not assigned'" id="tables" style="width: 50%; float:left;" class="table table-hover table-mc-light-blue">
+                  <tr>
+                    <th>Company Name: </th>
+                    <td style="width: 50%; float:left; font-weight: bold; color: navy">{{selected_load.carrier | titlecase}}</td>
+                  </tr>
+                  <tr>
+                    <th>Contact Person: </th>
+                    <td style="width: 50%; float:left; font-weight: bold; color: navy">{{selected_load.carrier_contact_name}}</td>
+                  </tr>
+                  <tr>
+                    <th>Phone#: </th>
+                    <td style="width: 50%; float:left; font-weight: bold; color: navy">{{selected_load.carrier_contact_phone}}</td>
+                  </tr>
+            </table>
+              <form ngNativeValidate *ngIf="selected_load.assigned !== '0' && pickup > today" (submit)="unassign(selected_load.id, comments)">
                   <textarea name="comments" placeholder="Add comments to unassign" id="" cols="60" rows="3" [(ngModel)]="comments" required></textarea>
-                  <button class="btn btn-warning" (click)="unassign(selected_load.id, comments)">Unassign!</button>
+                  <input class="btn btn-warning" type="submit" value="Unassign" name="submit">
               </form>
+            </div>
+          </div>
       </div>
     </div>

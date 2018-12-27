@@ -14,23 +14,13 @@
 				<a class="navbar-brand" href="#"><span>Prowess </span>Logistics</a>
 				<ul class="nav navbar-top-links navbar-right">
 					<li class="dropdown"><a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-						<em class="fa fa-bell"></em><span class="label label-danger">3</span>
+						<em class="fa fa-bell"></em><span class="label label-danger">{{loadToBeBilled.length}}</span>
 					</a>
 						<ul class="dropdown-menu dropdown-alerts">
-							<li><a href="#">
-								<div><em class="fa fa-bullhorn color-red"></em> Submit Load #424324
-									<span class="pull-right text-muted small">1 Day late</span></div>
+							<li *ngFor="let x of loadToBeBilled"><a href="#">
+								<div><em class="fa fa-bullhorn color-red"></em> Submit Load #{{x.ref_id}}
+									<span class="pull-right text-muted small">{{x.late}} Days late</span></div>
 							</a></li>
-							<li class="divider"></li>
-							<li><a href="#">
-									<div><em class="fa fa-bullhorn color-red"></em> Submit Load #424324
-										<span class="pull-right text-muted small">3 Days late</span></div>
-								</a></li>
-							<li class="divider"></li>
-							<li><a href="#">
-									<div><em class="fa fa-bullhorn color-red"></em> Submit Load #424324
-										<span class="pull-right text-muted small">1 Week late</span></div>
-								</a></li>
 							<li class="divider"></li>
 						</ul>
 					</li>

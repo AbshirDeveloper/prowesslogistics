@@ -13,8 +13,11 @@ $data = json_decode(file_get_contents("php://input"));
 $returnedDriver = $public->select('driver', '');
 $returnedDispatcher = $public->select('dispatcher', '');
 $returnedLoad = $public->select('loads', '');
+$returnedDeduction = $public->select('deductions', '');
+$returnedTransactions = $public->select('transactions', '');
+$returnedCarrier = $public->select('dispatcher', "where broker_type = 'Carrier'");
 
-$newData = [$returnedDriver, $returnedDispatcher, $returnedLoad];
+$newData = [$returnedDriver, $returnedDispatcher, $returnedLoad, $returnedCarrier, $returnedDeduction, $returnedTransactions];
 echo json_encode($newData);
 
 ?>

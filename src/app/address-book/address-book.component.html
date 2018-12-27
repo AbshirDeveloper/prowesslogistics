@@ -77,39 +77,42 @@
   </div>
   </div>
   <br />
-  <button class="collapsibleTwo">Broker Registration</button>
+  <button class="collapsibleTwo">Other Registration</button>
   <div class="dispatcher">
   <div class="register">
-      <h3>Broker Registration Form</h3>
+      <h3>Registration Form</h3>
       <form ngNativeValidate id="reg-form" (submit)="register_broker()">
         <div>
           <label for="name">Broker Type</label>
           <select name="type" id="" name="broker" [(ngModel)]="dispatcher_info.broker_type" required>
-            <option value="company">Company</option>
-            <option value="individual">Individual</option>
+            <option value="Dispatcher">Dispatcher</option>
+            <option value="Carrier">Carrier</option>
+            <option value="Customer">Customer</option>
           </select>
           <div class="sep">
               <span class="or">...</span>
           </div>
           <!-- <input type="text" id="name" spellcheck="false" placeholder="Shridhar Deshmukh"/> -->
-          <label for="dba">DBA Name</label>
-          <input type="text" id="dba" spellcheck="false" placeholder="DBA Name" name="dba" [(ngModel)]="dispatcher_info.dba_name" required/>
+          <label *ngIf="dispatcher_info.broker_type === 'Dispatcher' || dispatcher_info.broker_type === 'Customer'" for="dba">DBA Name</label>
+          <input *ngIf="dispatcher_info.broker_type === 'Dispatcher' || dispatcher_info.broker_type === 'Customer'" type="text" id="dba" spellcheck="false" placeholder="DBA Name" name="dba" [(ngModel)]="dispatcher_info.dba_name" required/>
+          <label for="contact">Company Name</label>
+          <input type="text" id="carrier" spellcheck="false" placeholder="Company Name" name="carrier" [(ngModel)]="dispatcher_info.company_name" required/>
           <label for="contact">Contact Name</label>
           <input type="text" id="contance" spellcheck="false" placeholder="Contact Name" name="dba" [(ngModel)]="dispatcher_info.contact_name" required/>
-          <label for="ein">EIN</label>
-          <input type="text" id="ein" placeholder="EIN" name="ein" [(ngModel)]="dispatcher_info.ein" required/>
-          <label for="mc">MC Number</label>
-          <input type="text" id="mc" placeholder="MC #" name="mc" [(ngModel)]="dispatcher_info.mc_number" required/>
-          <label for="dot">US DOT #</label>
-          <input type="text" id="dot" spellcheck="false" placeholder="US DOT #" name="dot" [(ngModel)]="dispatcher_info.us_dot_no" required/>
-          <label for="account">Account #</label>
-          <input type="text" id="account" spellcheck="false" placeholder="Account #" name="acount" [(ngModel)]="dispatcher_info.account_number" required/>
+          <label *ngIf="dispatcher_info.broker_type === 'Dispatcher' || dispatcher_info.broker_type === 'Customer'" for="ein">EIN</label>
+          <input *ngIf="dispatcher_info.broker_type === 'Dispatcher' || dispatcher_info.broker_type === 'Customer'" type="text" id="ein" placeholder="EIN" name="ein" [(ngModel)]="dispatcher_info.ein" required/>
+          <label *ngIf="dispatcher_info.broker_type !== 'Customer'" for="mc">MC Number</label>
+          <input *ngIf="dispatcher_info.broker_type !== 'Customer'" type="text" id="mc" placeholder="MC #" name="mc" [(ngModel)]="dispatcher_info.mc_number" required/>
+          <label *ngIf="dispatcher_info.broker_type !== 'Customer'" for="dot">US DOT #</label>
+          <input *ngIf="dispatcher_info.broker_type !== 'Customer'" type="text" id="dot" spellcheck="false" placeholder="US DOT #" name="dot" [(ngModel)]="dispatcher_info.us_dot_no" required/>
+          <label *ngIf="dispatcher_info.broker_type === 'Dispatcher' || dispatcher_info.broker_type === 'Customer'" for="account">Account #</label>
+          <input *ngIf="dispatcher_info.broker_type === 'Dispatcher' || dispatcher_info.broker_type === 'Customer'" type="text" id="account" spellcheck="false" placeholder="Account #" name="acount" [(ngModel)]="dispatcher_info.account_number" required/>
           <label for="email">Email</label>
           <input type="text" id="email" spellcheck="false" placeholder="example@mail.com" name="email" [(ngModel)]="dispatcher_info.email" required/>
           <label for="phone">phone#</label>
           <input type="text" id="phone" spellcheck="false" placeholder="Phone #" name="phone" [(ngModel)]="dispatcher_info.phone" required/>
           <label></label>
-          <input type="submit" value="Register Broker" id="create-account" class="button"/>
+          <input type="submit" value="Register {{dispatcher_info.broker_type}}" id="create-account" class="button"/>
           <div class="sep">
               <span class="or">...</span>
           </div>
@@ -120,7 +123,7 @@
                 <thead>
                   <tr>
                     <th>Date</th>
-                    <th>Broker Type</th>
+                    <th>Type</th>
                     <th>DBA Name</th>
                     <th>Contact Name</th>
                     <th>EIN</th>
@@ -161,7 +164,7 @@
           <thead>
             <tr>
               <th>Registered Date</th>
-              <th>Name/Description</th>
+              <th>Name</th>
               <th>Type</th>
               <th>Email</th>
               <th>Phone</th>
@@ -170,10 +173,10 @@
               <th>Action (if Driver)</th>
             </tr>
           </thead>
-          <tbody>
-            <tr *ngFor="let x of driverList | filter:search">
+          <tbody *ngFor="let x of driverList | filter:search">
+            <tr style="background-color:rgb(228, 185, 185);" *ngIf="x.status !== 'Active'">
               <td data-title="ID">{{x.date}}</td>
-              <td data-title="Name"><a (click)="pops(1)" style="color:blue">{{x.name}}</a></td>
+              <td data-title="Name"><a (click)="pops(x.id)" style="color:blue">{{x.name}}<span *ngIf="x.ubilled.length" style="color:red"> ( {{x.ubilled.length}} Unbilled )</span></a></td>
               <td data-title="Link">{{x.type}}</td>
               <td data-title="Status">{{x.email}}</td>
               <td data-title="Status">{{x.phone}}</td>
@@ -184,6 +187,19 @@
                 <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i>
               </td>
             </tr>
+            <tr *ngIf="x.status === 'Active'">
+                <td data-title="ID">{{x.date}}</td>
+                <td data-title="Name"><a (click)="pops(x.id)" style="color:blue">{{x.name}}<span *ngIf="x.ubilled.length" style="color:red"> ( {{x.ubilled.length}} Unbilled )</span></a></td>
+                <td data-title="Link">{{x.type}}</td>
+                <td data-title="Status">{{x.email}}</td>
+                <td data-title="Status">{{x.phone}}</td>
+                <td data-title="Status">{{x.truck_number}}</td>
+                <td data-title="Status">{{x.trailer_number}}</td>
+                <td data-title="Status" style="color: blue; font-weight: bold; font-size: 20px">
+                  &nbsp;
+                  <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i>
+                </td>
+              </tr>
           </tbody>
         </table>
       </div>
@@ -192,35 +208,146 @@
 <div id="myEdit2" class="modal">
   <!-- Modal content -->
   <div class="modal-content">
-    <button (click)="pop_close()" class="close">&times;</button>
-    <!DOCTYPE html>
-    <html lang="en">
-    <body>
+      <h3 style="color:green; float: right;" *ngIf="selected_driver.status === 'Active'">{{selected_driver.status | titlecase}}</h3>
+      <h3 style="color:red; float: right;" *ngIf="selected_driver.status !== 'Active'">{{selected_driver.status | titlecase}}</h3>
+    <h1>{{selected_driver.name | titlecase}}</h1>
+    <button (click)="pop_close()" class="close">&times;</button> <br/><br>
     <div style="text-align: center; padding-right: 0%; padding-left: 0%; width: 100%" class="container">
-    <!-- <table class="table table-striped">
-         <thead>
-           <tr>
-             <th>Date</th>
-             <th>Description</th>
-             <th>Amount</th>
-             <th>Credit</th>
-             <th>Balance</th>
-             <th>Initials</th>
-           </tr>
-         </thead>
-         <tbody>
-           <tr>
-             <td>date</td>
-             <td>some description</td>
-             <td>something else</td>
-             <td>something else</td>
-             <td>something else</td>
-             <td>something else</td>
-           </tr>
-         </tbody>
-       </table> -->
-      </div>
-    </body>
-    </html>
+      <table id="tables" style="width: 50%; float:left;" class="table table-hover table-mc-light-blue">
+        <tr>
+          <th>Date Registered: </th>
+          <td>{{selected_driver.date}}</td>
+        </tr>
+        <tr>
+          <th>ID: </th>
+          <td>{{selected_driver.id}}</td>
+        </tr>
+        <tr>
+          <th>Email: </th>
+          <td>{{selected_driver.email}}</td>
+        </tr>
+        <tr>
+          <th>Status: </th>
+          <td>{{selected_driver.status}}</td>
+        </tr>
+        <tr>
+          <th>Address: </th>
+          <td>{{selected_driver.address}}</td>
+        </tr>
+        <tr>
+          <th>Phone#: </th>
+          <td>{{selected_driver.phone}}</td>
+        </tr>
+      </table>
+      <table id="tables" style="width: 50%; float:left" class="table table-hover table-mc-light-blue">
+          <tr>
+            <th>Type: </th>
+            <td>{{selected_driver.type | titlecase}}</td>
+          </tr>
+          <tr>
+              <th>Experience: </th>
+              <td>{{selected_driver.experience}}</td>
+          </tr>
+          <tr>
+              <th>Drivers License #: </th>
+              <td>{{selected_driver.license}}</td>
+          </tr>  
+          <tr>
+            <th>DL Expiration: </th>
+            <td>{{selected_driver.dl_expiration}}</td>
+          </tr>
+          <tr>
+            <th>DOT Medical Card Expiration: </th>
+            <td>{{selected_driver.dot_medical_card_expiration}}</td>
+          </tr>
+          <tr>
+            <th>Truck #: </th>
+            <td>{{selected_driver.truck_number}}</td>
+          </tr>
+          </table>
+          <table id="tables" style="width: 50%; float:left" class="table table-hover table-mc-light-blue">
+            <tr>
+              <th>Trailer #: </th>
+              <td>{{selected_driver.trailer_number}}</td>
+            </tr>
+            <tr>
+                <th>Advance Money Eligibility: </th>
+                <td>{{selected_driver.advance_money_eligible | titlecase}}</td>
+            </tr>
+            <tr>
+                <th>Driver Insurance: </th>
+                <td>{{selected_driver.driver_insurance | titlecase}}</td>
+            </tr>  
+            <tr>
+              <th>Insurance Expiration: </th>
+              <td>{{selected_driver.insurance_expiration_date}}</td>
+            </tr>
+            <tr>
+              <th>Group #: </th>
+              <td>{{selected_driver.group_no}}</td>
+            </tr>
+            <tr>
+              <th> Insurance ID #: </th>
+              <td>{{selected_driver.id_no}}</td>
+            </tr>
+            </table>
+          <div class="sep">
+              <span class="or">.</span>
+          </div>
+            <label class="switch">
+              <input (change)="activate(selected_driver.id)" type="checkbox" name="checkbox" [(ngModel)]="checked">
+              <span class="slider round"></span>
+            </label>
+    </div>
+    <div class="table-responsive-vertical shadow-z-1">
+          <table id="table" class="table table-hover table-mc-light-blue">
+              <thead>
+                <tr>
+                  <th>Select</th>
+                  <th>Load #</th>
+                  <th>P/L</th>
+                  <th>D/L</th>
+                  <th>Driver Pay</th>
+                  <th>Payroll Advance</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let x of driverPayableLoad">
+                <tr *ngIf="x.drop < today && x.settled !== 'yes'" style="background-color: rgb(223, 177, 132)">
+                  <td data-title="ID"><input type="checkbox" name="selection" [(ngModel)]="x.select" (change)="calculateSelected()"></td>
+                  <td data-title="ID">{{x.ref_id}}</td>
+                  <td data-title="Name">{{x.pick_up}}<span style="display:block">{{x.pick_up_date | date:'medium'}}</span></td>
+                  <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
+                  <td data-title="Status">{{x.charge * .88}}</td>
+                  <td data-title="Status">0</td>
+                </tr>
+                <tr *ngIf="x.drop > today">
+                    <td data-title="ID"><input type="checkbox" name="selection" [(ngModel)]="x.select" (change)="calculateSelected()" disabled></td>
+                    <td data-title="ID">{{x.ref_id}}</td>
+                    <td data-title="Name">{{x.pick_up}}<span style="display:block">{{x.pick_up_date | date:'medium'}}</span></td>
+                    <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
+                    <td data-title="Status">{{x.charge * .88}}</td>
+                    <td data-title="Status">0</td>
+                </tr>
+              </tbody>
+            </table>
+            <hr>
+            <table id="tables" style="width: 35%; float:right; border-bottom: none; border-top: none;" class="table table-hover table-mc-light-blue">
+                <tr *ngFor="let x of summaryArray">
+                  <th style="float:left">{{x.description}}</th>
+                  <td style="float: right">{{x.deduction | currency }}</td>
+                </tr>
+                <hr>
+                <span style="float: right">{{ total | currency }}</span>
+                <button (click)="registerTransaction()">Settle this total --></button>
+            </table>
+            <form style="padding-bottom: 100px">
+              <button *ngIf="disabled" id="filldetails" (click)="addDeduction()">Add Deductions <i class="fa fa-plus" ></i></button> <br>
+              <div formArray="deductions" class="input-group" *ngFor="let deduction of userForm.get('deductions').controls; let i = index">
+                  <button (click)="deleteDeduction(i)"><i class="fa fa-trash" aria-hidden="true" style="font-size: 4rem;"></i></button>
+                  <input style="width: 300px; float: left;" type="text" id="content[i].description" class="form-control" name="description{{i}}" [(ngModel)]="content[i].description" placeholder="Description">&nbsp; &nbsp;
+                  <input style="width: 100px; float: left;" type="number" id="content[i].deduction" class="form-control" name="deduction{{i}}" [(ngModel)]="content[i].deduction" (change)="totalCalculate()" placeholder="$">
+              </div>
+            </form>
+          </div>
   </div>
 </div>

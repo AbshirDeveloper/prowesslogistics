@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ServiceService } from '../utils/service.service'
 
 @Component({
   selector: 'app-reports',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ReportsComponent implements OnInit {
 
-  constructor() { }
+  constructor(private service: ServiceService) { }
   driver = false;
   overall = true;
   overall_class = 'active';
@@ -22,6 +23,15 @@ export class ReportsComponent implements OnInit {
     this.overall_class = 'active';
     this.driver_class = ''; 
   }
+  }
+
+  pops(id){
+    window.localStorage.setItem('edit', id);
+    document.getElementById('myEdit2').style.display = "block"; 
+  }
+
+  pop_close(){
+    document.getElementById('myEdit2').style.display = "none"; 
   }
 
   public barChartOptions:any = {
@@ -50,7 +60,63 @@ export class ReportsComponent implements OnInit {
   public chartHovered(e:any):void {
     console.log(e);
   }
- 
+
+  drivers;
+  loads;
+  deduction;
+  transaction;
+  allDriversSummary = [];
+  getData(){
+    this.service.get().subscribe(
+      data => {
+        this.drivers = data[0]
+        this.loads = data[2]
+        this.deduction = data[4]
+        this.transaction = data[5];
+
+        this.allDriversSummary = this.drivers.map(driver => {
+            driver.driverName = driver.name;
+            driver.totaLoads = this.loads.filter(load => load.driver_id == driver.id).length;
+            var charge = this.loads.filter(load => load.driver_id == driver.id).map(el => {
+              return +el.charge;
+            })
+            var exp = this.deduction.filter(deduction => deduction.driver_id == driver.id && deduction.type === 'driver deductions').map(el => {
+              return +el.amount;
+            })
+
+            var net = this.transaction.filter(transaction => transaction.owner_id == driver.id).map(el => {
+              return +el.amount;
+            })
+
+            var generalDeduction = this.deduction.filter(deduction => deduction.driver_id == driver.id && deduction.type !== 'driver deductions').map(el => {
+              return +el.amount;
+            })
+
+            function getSum(total, num) {
+            return total + num;
+            }
+            driver.totalCharge = charge.reduce(getSum);
+            driver.expenses = exp.reduce(getSum);
+            driver.netPay = net.reduce(getSum);
+            driver.deductions = generalDeduction.length ? generalDeduction.reduce(getSum) : 0;
+            driver.final = (charge.reduce(getSum) * 0.12) - driver.deductions;
+
+            return driver;
+        });
+
+        var totale = this.allDriversSummary.map(el => {
+          return +el.final;
+        })
+    
+        function getSum(total, num) {
+        return total + num;
+        }
+    
+        this.total = totale.reduce(getSum);
+    }
+    );
+  }
+
   public randomize():void {
     // Only Change 3 values
     let data = [
@@ -77,7 +143,11 @@ export class ReportsComponent implements OnInit {
     public pieChartType:string = 'pie';
     coll = document.getElementsByClassName("collapsible");
     i;
+
+    total;
   ngOnInit() {
+    this.getData();
+
     for (this.i = 0; this.i < this.coll.length; this.i++) {
       this.coll[this.i].addEventListener("click", function() {
         this.classList.toggle("active");

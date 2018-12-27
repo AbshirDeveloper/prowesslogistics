@@ -234,11 +234,11 @@ h1 {
 }
 
 .active, .collapsible:hover {
-  background-color: #555;
+  /* background-color: #555; */
   color: white;
 }
 .active, .collapsibleTwo:hover {
-  background-color: #555;
+  /* background-color: #555; */
   color: white;
 }
 .register {

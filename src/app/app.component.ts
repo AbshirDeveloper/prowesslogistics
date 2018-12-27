@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ServiceService } from './utils/service.service'
 
 @Component({
@@ -31,6 +31,21 @@ export class AppComponent {
 
   returned_response = null;
 
+  loadToBeBilled = [];
+
+  today = Date.now();
+
+  getData(){
+    this.service.get().subscribe(
+      data => {
+        this.loadToBeBilled = data[2].filter(el => new Date(el.delivery_time).getTime() < this.today && el.billed === 'Nope, Bill it now')
+        .map(element => {
+          element.late = (+(this.today) - +(new Date(element.delivery_time).getTime())) / 86400;
+          return element;
+        });
+      })
+  }
+
   _login(){
     this.service.post(this.info).subscribe(
       log => {
@@ -42,5 +57,9 @@ export class AppComponent {
         }
     }
     )
+  }
+
+  ngOnInit(){
+    this.getData();
   }
 }

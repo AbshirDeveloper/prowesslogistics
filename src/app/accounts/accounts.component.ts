@@ -20,16 +20,28 @@ export class AccountsComponent implements OnInit {
   }
 
   loads = [];
+  pickup;
+  dropp;
   getData(){
     this.service.get().subscribe(
       data => {
-        this.loads = data[2];
+        data[2].map(el => {
+          el.epoch = new Date(el.delivery_time).getTime();
+          this.loads.push(el);
+        })
         // this.drivers = data[0];
     }
     )
   }
-
+  selected_loads = [];
+  selected(){
+    this.selected_loads = this.loads.filter(el => el.selected === true )
+  }
+  today = Date.now();
   ngOnInit() {
+
+    // this.pickup = new Date(element.pick_up_date).getTime();
+    // this.dropp = new Date(element.delivery_time).getTime();
     this.getData();
   }
 
