@@ -1,6 +1,6 @@
 <div class="main">
     <div class="one" style="float: left">
-        <button class="collapsible">Add Deduction</button>
+        <!-- <button class="collapsible">Add Deduction</button>
       <div class="register">
         <h3>Deduction</h3>
         <form id="reg-form">
@@ -28,15 +28,14 @@
               <option value="driver_two">Driver One</option>
             </select>
             <!-- <input type="password" id="password" /> -->
-          </div>
+          <!-- </div>
           <div>
             <label></label>
             <input type="submit" value="Add" id="create-account" class="button"/>
           </div>
           </form>
-      </div>
-      <br />
-      <button class="collapsibleTwo">Setup Commisions</button>
+      </div> -->
+      <!-- <button class="collapsibleTwo">Setup Commisions</button>
       <div class="register">
         <h3>Set load proportion</h3>
         <form id="reg-form">
@@ -60,34 +59,36 @@
             <input type="submit" value="Set" id="create-account" class="button"/>
           </div>
           </form>
-      </div>
+      </div> -->
 <br/>
-      <button class="collapsibleFive">Payments</button>
+      <button class="collapsibleFive">Advance Payment</button>
       <div class="register">
         <h3>Make Payments</h3>
-        <form id="reg-form">
+        <form ngNativeValidate id="reg-form" (submit)="addAdvance()">
           <div>
-            <label for="driver_percent">Type</label>
-            <select name="type" id="">
-              <option value="payment">Actual Payment</option>
-              <option value="advance">Advance</option>
+            <label for="driver_percent">To A?</label>
+            <select name="type" id="" name="advance" [(ngModel)]="advance.toA" required>
+              <option value="Driver">Driver</option>
+              <option value="Dispatcher">Dispatcher</option>
             </select>
             <!-- <input type="text" id="driver_percent" spellcheck="false"/>&nbsp;
             <i>25%</i> -->
           </div>
           <div>
             <label for="amount">Amount <i>$</i></label>
-            <input type="text" id="amount" spellcheck="false"/>&nbsp;
+            <input type="text" id="amount" name="amount" [(ngModel)]="advance.amount" spellcheck="false" required/>&nbsp;
           </div>
           <div>
               <label for="load">Load <i>#</i> (Optional)</label>
-              <input type="text" id="load" spellcheck="false"/>&nbsp;
+              <input type="text" id="load" name="loadNumber" [(ngModel)]="advance.loadNumber" spellcheck="false"/>&nbsp;
             </div>
           <div>
-            <label for="fixed_charges">Driver</label>
-            <select name="drivers" id="">
-              <option value="driver_one">Abshir Jama #3124093514</option>
-              <option value="driver_two">Jamac Geedi #4654656656</option>
+            <label for="fixed_charges">Name</label>
+            <select *ngIf="advance.toA == 'Driver'" name="drivers" id="" name="driver" [(ngModel)]="advance.id" required>
+              <option *ngFor="let x of drivers" value="{{x.id}}">{{x.name}}</option>
+            </select>
+            <select *ngIf="advance.toA == 'Dispatcher'" name="drivers" id="" name="driver" [(ngModel)]="advance.id" required>
+                <option *ngFor="let x of dispatchers" value="{{x.id}}">{{x.contact_name}}</option>
             </select>
           </div>
           <div>
@@ -100,28 +101,72 @@
       <button class="collapsibleSixth">Register Staff</button>
       <div class="register">
         <h3>Staff Registration</h3>
-        <form id="reg-form">
+        <form id="reg-form" (submit)="registerStaff()">
           <div>
             <label for="name">Name</label>
-            <input type="text" id="name" spellcheck="false" placeholder="Full Name"/>&nbsp;
+            <input type="text" id="name" spellcheck="false" placeholder="Full Name" name="name" [(ngModel)]="addStaff.name"/>&nbsp;
           </div>
           <div>
               <label for="email">Email</label>
-              <input type="text" id="email" spellcheck="false" placeholder="example@mail.com"/>&nbsp;
+              <input type="text" id="email" spellcheck="false" placeholder="example@mail.com" name="email" [(ngModel)]="addStaff.email"/>&nbsp;
           </div>
           <div>
               <label for="phone">Phone</label>
-              <input type="text" id="phone" spellcheck="false" placeholder="Phone#"/>&nbsp;
+              <input type="text" id="phone" spellcheck="false" placeholder="Phone#" name="phone" [(ngModel)]="addStaff.phone"/>&nbsp;
           </div>
+          <div style="width: 40%; float: left">
+            <h3>Registeration:</h3>
+          <label class="switch">
+            <input type="checkbox" name="checkbox" [(ngModel)]="addStaff.registration">
+            <span class="slider round"></span>
+          </label>
+          </div>
+
+          <div style="width: 40%; float: left">
+              <h3>Deletion:</h3>
+            <label class="switch">
+              <input type="checkbox" name="checkbox" [(ngModel)]="addStaff.deletion">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div style="width: 40%; float: left">
+              <h3>Dispatching:</h3>
+            <label class="switch">
+              <input type="checkbox" name="checkbox" [(ngModel)]="addStaff.dispatching">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div style="width: 40%; float: left">
+              <h3>Billing:</h3>
+            <label class="switch">
+              <input type="checkbox" name="checkbox" [(ngModel)]="addStaff.billing">
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <div style="width: 40%; float: left">
+              <h3>See Reports:</h3>
+            <label class="switch">
+              <input type="checkbox" name="checkbox" [(ngModel)]="addStaff.seeReports">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div style="width: 40%; float: left">
+              <h3>Operations:</h3>
+            <label class="switch">
+              <input type="checkbox" name="checkbox" [(ngModel)]="addStaff.payAdvance">
+              <span class="slider round"></span>
+            </label>
+          </div>  
           <div>
-            <label></label>
-            <input type="submit" value="Register" id="create-account" class="button"/>
+              <label></label>
+              <input type="submit" value="Register" id="create-account" class="button"/>
           </div>
           </form>
       </div>
     </div>
     <div class="two" style="float: left">
-        <button class="collapsibleThree">Deductions</button>
+        <!-- <button class="collapsibleThree">Deductions</button>
         <div class="register">
         <table id="reg-form1" style="margin-top: 0px" class="table table-hover table-mc-light-blue">
             <thead>
@@ -143,27 +188,30 @@
               </tr>
             </tbody>
           </table>
-        </div>
+        </div> -->
     <br />
-        <button class="collapsibleFour">Payments</button>
+        <button class="collapsibleFour">Advance Payment</button>
         <div class="register">
         <table id="reg-form1" style="margin-top: 0px" class="table table-hover table-mc-light-blue">
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Type</th>
+                <th>To A</th>
+                <th>Name</th>
                 <th>Amount</th>
-                <th>Load #</th>
-                <th>Paid To</th>
+                <th>Load # (if Any)</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td data-title="Status">Today</td>
-                <td data-title="ID">ChargeBack</td>
-                <td data-title="Name">$876</td>
-                <td data-title="Link">897987</td>
-                <td data-title="Status">Abshir jama #6565</td>
+              <tr *ngFor="let x of advancedLoads">
+                <td data-title="Status">{{x.date}}</td>
+                <td data-title="ID">{{x.toA}}</td>
+                <td data-title="Name">{{x.name}}</td>
+                <td data-title="Link">{{x.amount}}</td>
+                <td data-title="Status">{{x.load_number}}</td>
+                <td *ngIf="x.paid === 'yes'" data-title="Status" style="color:green">Paid</td>
+                <td *ngIf="x.paid !== 'yes'"><i class="fa fa-trash" aria-hidden="true" style="font-size: 3rem; color: red" (click)="deleteAdvance(x.id)"></i></td>
               </tr>
             </tbody>
           </table>
@@ -177,27 +225,91 @@
             <th>Full Name</th>
             <th>Email</th>
             <th>Phone#</th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td data-title="Status">Abshir jama</td>
-            <td data-title="ID">brotherabshir@gmail.com</td>
-            <td data-title="Name">3124093514</td>
-            <td data-title="Status">
-              <a style="color: green; font-weight: bold">Activate</a>
-            </td>
+          <tr *ngFor="let x of staff">
+            <td data-title="Status"><a (click)="pops(x.id)">{{x.name}}</a></td>
+            <td data-title="ID">{{x.email}}</td>
+            <td data-title="Name">{{x.phone}}</td>
+            <td *ngIf="x.status" style="color:green" data-title="ID">Active</td>
+            <td *ngIf="!x.status" style="color:red" data-title="ID">Inactive</td>
+            <td *ngIf="x.type !== 'Admin'"><i class="fa fa-trash" aria-hidden="true" style="font-size: 2rem; color: red" (click)="deleteStaff(x.id)"></i></td>
           </tr>
-          <tr>
-              <td data-title="Status">Geedi Jama</td>
-              <td data-title="ID">example@mail.com</td>
-              <td data-title="Name">768768769</td>
-              <td data-title="Status">
-                <a style="color: red; font-weight: bold">Deactive</a>
-              </td>
-            </tr>
         </tbody>
       </table>
 </div>
 </div>
+
+
+<div id="myEdit2" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <button (click)="pop_close()" class="close">&times;</button> <br/><br>
+      <label *ngIf="oneStaff.type !== 'Admin'" class="switch">
+          <input type="checkbox" name="checkbox" [(ngModel)]="oneStaff.status">
+          <span class="slider round"></span>
+      </label> <br>
+      <h3>{{oneStaff.name}}</h3>
+      <div style="text-align: center; padding-right: 0%; padding-left: 0%; width: 100%" class="container">
+          <form ngNativeValidate style="width: 100%">
+              <div>
+                <input type="text" id="name" name="name" [(ngModel)]="oneStaff.name" spellcheck="false"/>&nbsp;
+                <input type="text" id="phone" name="phone" [(ngModel)]="oneStaff.phone" spellcheck="false"/>&nbsp;
+                <input type="text" id="email" name="email" [(ngModel)]="oneStaff.email" spellcheck="false"/>
+              </div>
+          </form>
+
+            <div *ngIf="oneStaff.type !== 'Admin'" style="width: 40%; float: left">
+              <h3>Registeration:</h3>
+            <label class="switch">
+              <input type="checkbox" name="checkbox" [(ngModel)]="oneStaff.registration">
+              <span class="slider round"></span>
+            </label>
+            </div>
+  
+            <div *ngIf="oneStaff.type !== 'Admin'" style="width: 40%; float: left">
+                <h3>Deletion:</h3>
+              <label class="switch">
+                <input type="checkbox" name="checkbox" [(ngModel)]="oneStaff.deletion">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div *ngIf="oneStaff.type !== 'Admin'" style="width: 40%; float: left">
+                <h3>Dispatching:</h3>
+              <label class="switch">
+                <input type="checkbox" name="checkbox" [(ngModel)]="oneStaff.dispatching">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div *ngIf="oneStaff.type !== 'Admin'" style="width: 40%; float: left">
+                <h3>Billing:</h3>
+              <label class="switch">
+                <input type="checkbox" name="checkbox" [(ngModel)]="oneStaff.billing">
+                <span class="slider round"></span>
+              </label>
+            </div>
+  
+            <div *ngIf="oneStaff.type !== 'Admin'" style="width: 40%; float: left">
+                <h3>See Reports:</h3>
+              <label class="switch">
+                <input type="checkbox" name="checkbox" [(ngModel)]="oneStaff.seeReports">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            <div *ngIf="oneStaff.type !== 'Admin'" style="width: 40%; float: left">
+                <h3>Operations:</h3>
+              <label class="switch">
+                <input type="checkbox" name="checkbox" [(ngModel)]="oneStaff.payAdvance">
+                <span class="slider round"></span>
+              </label>
+            </div>  
+            <div class="sep">
+                <span class="or">.</span>
+            </div>
+            <button class="btn btn-success" (click)="updateStaff()">Update</button>
+      </div>
+      </div>
+      </div>

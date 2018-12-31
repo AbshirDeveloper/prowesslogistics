@@ -669,7 +669,7 @@
       background-color: #ffccbc;
     }
   }
-  input[type=text], select {
+  input[type=text], input[type=number], select {
     width: 30%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -687,9 +687,9 @@
     left: 0;
     top: 0;
     width: 80%; /* Full width */
-    height: 900%; /* Full height */
+    height: 100%; /* Full height */
     margin-left: 20%;
-    margin-top: 10%;
+    margin-top: 3%;
     overflow: auto; /* Enable scroll if needed */
 }
 

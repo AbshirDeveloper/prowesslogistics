@@ -6,6 +6,7 @@ import {ActivatedRoute, Params, Router} from '@angular/router';
 import { Pipe, PipeTransform } from '@angular/core';
 import { FormGroup, FormControl, FormControlName, FormArray, FormArrayName, Validators} from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
+import { DeductionsComponent } from '../deductions/deductions.component';
 
 @Component({
   selector: 'app-address-book',
@@ -79,16 +80,19 @@ export class AddressBookComponent implements OnInit {
       total_deductions: this.totalDeductions,
       number_of_loads: this.selectedLoadsLength.length,
       selectedLoads: this.selectedLoadsLength,
-      deductions: this.content.filter(el => el.description !== null)
+      deductions: this.content.filter(el => el.description !== null),
+      afterFactoring: 0
     }
+
+    this.transactionRegisteration['deductions'][this.transactionRegisteration['deductions'].length] = { 
+      description : 'Payroll Advance', 
+      deduction: this.totalDriverAdvance['amount']
+    };
 
     this.service.post(this.transactionRegisteration).subscribe(
       data => {},()=> this.getData())
       this.transactionRegisteration = {};
       this.pop_close();
-        for(var i = 0; i < 9 ; i ++){
-        (<FormArray>this.userForm.get('deductions')).removeAt(i)
-        }
       this.summaryArray = [];
       this.total = 0;
   }
@@ -120,9 +124,23 @@ export class AddressBookComponent implements OnInit {
   }
 
   selected_driver = [];
+  settlibleLoads = [];
+  totalDriverAdvance = {};
   pops(id){
     this.service.get().subscribe(
       data => {
+        var tot = [0];
+        data[6].filter(el => el.owner_id === id && el.paid !== 'yes').map(element => {
+          tot.push(+element.amount);
+        })
+        if(tot.length > 1){
+        this.totalDriverAdvance['amount'] = tot.reduce((a, b) => {
+            return a + b;
+        })
+        this.totalDriverAdvance['description'] = 'Payroll Advance';
+        } else {
+          this.totalDriverAdvance['amount'] = 0; 
+        }
         data[0].forEach(element => {
           if(element.id === id){
             this.selected_driver = element;
@@ -130,6 +148,12 @@ export class AddressBookComponent implements OnInit {
           }
         });
         this.driverPayableLoad = data[2].filter(element => element.driver_id === id).map(el => {
+          el.pick = new Date(el.pick_up_date).getTime();
+          el.drop = new Date(el.delivery_time).getTime();
+          return el;
+        });
+
+        this.settlibleLoads = data[2].filter(element => element.driver_id === id && element.settled !== 'yes').map(el => {
           el.pick = new Date(el.pick_up_date).getTime();
           el.drop = new Date(el.delivery_time).getTime();
           return el;
@@ -142,6 +166,12 @@ export class AddressBookComponent implements OnInit {
 
   pop_close(){
     document.getElementById('myEdit2').style.display = "none"; 
+    for(var i = 0; i < 8 ; i ++){
+      (<FormArray>this.userForm.get('deductions')).removeAt(i)
+      this.content[i].description = null;
+      this.content[i].deduction = null;
+      }
+      this.totalDriverAdvance = {};
   }
   delete_object = {
     table: '',
@@ -218,11 +248,14 @@ export class AddressBookComponent implements OnInit {
     function getSum(total, num) {
     return total + num;
     }
-    this.total = this.SelectedTotal - newArray.reduce(getSum)
-    this.totalDeductions = newArray.reduce(getSum);
+    this.total = this.SelectedTotal - newArray.reduce(getSum) - this.totalDriverAdvance['amount'];
+    this.totalDeductions = newArray.reduce(getSum) + this.totalDriverAdvance['amount'];
     this.summaryArray = this.content.filter(el => el.deduction != null);
   }
+  loggedInStaff;
+
   ngOnInit() {
+    this.loggedInStaff = JSON.parse(window.localStorage.getItem('loggedStaff'));
     this.dispatcher_info['broker_type'] = 'Dispatcher';
     this.getData();
     for (this.i = 0; this.i < this.coll.length; this.i++) {
@@ -280,7 +313,8 @@ export class AddressBookComponent implements OnInit {
   SelectedTotal = 0;
   selectedLoadsLength = [];
   calculateSelected(){
-    var newArray = []
+    var newArray = [0];
+    this.selectedLoadsLength = [];
     this.driverPayableLoad.forEach(el => {
       if(el.select){
       newArray.push(+el.charge * .88);
@@ -295,6 +329,7 @@ export class AddressBookComponent implements OnInit {
   } else {
   this.SelectedTotal = 0;
   }
+
 
   this.totalCalculate();
   }

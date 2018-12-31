@@ -15,9 +15,11 @@ $returnedDispatcher = $public->select('dispatcher', '');
 $returnedLoad = $public->select('loads', '');
 $returnedDeduction = $public->select('deductions', '');
 $returnedTransactions = $public->select('transactions', '');
+$returnedAdvance = $public->select('advance', '');
+$returnedStaff = $public->select('staff', '');
 $returnedCarrier = $public->select('dispatcher', "where broker_type = 'Carrier'");
 
-$newData = [$returnedDriver, $returnedDispatcher, $returnedLoad, $returnedCarrier, $returnedDeduction, $returnedTransactions];
+$newData = [$returnedDriver, $returnedDispatcher, $returnedLoad, $returnedCarrier, $returnedDeduction, $returnedTransactions, $returnedAdvance, $returnedStaff];
 echo json_encode($newData);
 
 ?>

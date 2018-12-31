@@ -123,7 +123,7 @@
                   <td data-title="Status">{{x.driver | titlecase}}</td>
                   <td data-title="Status">{{x.truck_number}}</td>
                   <td data-title="Status">{{x.status}}</td>
-                  <td data-title="Status">
+                  <td *ngIf="loggedInStaff.dispatching === '1'" data-title="Status">
                     <a (click)="pops(x.id)" style="color: black" class="btn btn-success">Dispatch Now</a> &nbsp; &nbsp;
                     <i (click)="setForDelete(x.id, 'loads')" style="color: red; font-size:x-large" class="fa fa-trash" aria-hidden="true"></i>
                   </td>
@@ -134,7 +134,9 @@
                   <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
                   <td data-title="Status">{{x.driver | titlecase}}</td>
                   <td data-title="Status">{{x.truck_number}}</td>
-                  <td data-title="Status">{{x.status}}</td>
+                  <td *ngIf="x.pick > today" data-title="Status">Assigned</td>
+                  <td *ngIf="x.pick < today && x.drop > today" data-title="Status">On The Way</td>
+                  <td *ngIf="x.drop < today" data-title="Status">Delivered</td>
                   <td data-title="Status"><a (click)="pops(x.id)">View</a></td>
                 </tr>
               </tbody>
@@ -145,7 +147,10 @@
   <div id="myEdit2" class="modal" style="height: 100%;">
       <!-- Modal content -->
       <div class="modal-content" style="height: 1000px;">
-              <h2>{{selected_load.status | titlecase}}</h2>
+              <h2 *ngIf="selected_load.assigned === '0'">{{selected_load.status}}</h2>
+              <h2 *ngIf="pickup > today && selected_load.assigned === '1'">Assigned</h2>
+              <h2 *ngIf="pickup < today && dropp > today && selected_load.assigned === '1'">On The Way</h2>
+              <h2 *ngIf="dropp < today && selected_load.assigned === '1'">Delivered</h2>
               <div *ngIf="selected_load.assigned === '0'" class="progress" style="height: 6%;">
                 <div class="progress-bar" role="progressbar" aria-valuenow="25" aria-valuemin="4" aria-valuemax="100" style="width:25%; height: 100%; font-size: 50px; padding-top: 2%; background-color:rgb(193, 230, 193)">
                   25%
@@ -220,7 +225,7 @@
               </tr>
               <tr>
                 <th>Charge: </th>
-                <td>{{selected_load.charge}}</td>
+                <td>{{selected_load.charge | currency}}</td>
               </tr>
               </table>
               <div class="sep">

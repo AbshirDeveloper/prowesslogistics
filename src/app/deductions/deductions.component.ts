@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as $ from 'jquery';
+import { ServiceService } from '../utils/service.service';
 
 @Component({
   selector: 'app-deductions',
@@ -8,7 +9,7 @@ import * as $ from 'jquery';
 })
 export class DeductionsComponent implements OnInit {
 
-  constructor() { }
+  constructor(private service:ServiceService) { }
   coll = document.getElementsByClassName("collapsible");
   collTwo = document.getElementsByClassName("collapsibleTwo");
   collThree = document.getElementsByClassName("collapsibleThree");
@@ -17,7 +18,95 @@ export class DeductionsComponent implements OnInit {
   collSixth = document.getElementsByClassName("collapsibleSixth");
   collSeventh = document.getElementsByClassName("collapsibleSeventh");
   i;
+
+  advance = {
+    toA: 'Driver',
+  }
+  addStaff = {
+    staff: 'Staff'
+  }
+
+  staff = [];
+
+  registerStaff(){
+    this.service.post(this.addStaff).subscribe(
+      data => {},()=> this.getData())
+      this.addStaff = {
+        staff: 'Staff'
+      }
+  }
+
+  addAdvance(){
+    if(this.advance['loadNumber'] == null && this.advance['loadNumber'] == undefined){
+      this.advance['loadNumber'] = 'N/A';
+    }
+    this.service.post(this.advance).subscribe(
+    data => {},()=> this.getData())
+    this.advance = {
+      toA: 'Driver'
+    };
+  }
+
+  drivers = [];
+  dispatchers = [];
+  advancedLoads = [];
+  today = Date.now();
+  getData(){
+    this.service.get().subscribe(
+      data => {
+        this.dispatchers = data[1]
+        this.drivers = data[0];
+        this.advancedLoads = data[6];
+        this.staff = data[7];
+      })
+  }
+
+  deleteAdvance(id) {
+    var prom = prompt('Are you sur you wanto to delete this');
+    if(prom === '773'){
+    var deleteAdvance = {
+      delete: true,
+      id: id
+    }
+    this.service.post(deleteAdvance).subscribe(
+      data => {},()=> this.getData())
+    }
+  }
+
+  oneStaff = {};
+
+  updateStaff() {
+    this.oneStaff['updatingStaff'] = 'staff';
+    this.service.post(this.oneStaff).subscribe(
+      data => {},()=> this.getData())
+      this.pop_close();
+  }
+
+  pops(id){
+    this.oneStaff = this.staff.filter(el => el.id === id)[0];
+    document.getElementById('myEdit2').style.display = "block"; 
+  }
+
+  pop_close(){
+    document.getElementById('myEdit2').style.display = "none"; 
+  }
+  loggedInStaff;
+
+  deleteStaff(id){
+    var prom = prompt('Enter your password to delete this staff');
+    if(prom === '773'){
+    const staffDelete = {
+      staffDeleting: 'yes',
+      id: id
+    }
+    this.service.post(staffDelete).subscribe(
+      data => {},()=> this.getData())
+    }
+  }
+  
   ngOnInit() {
+    this.loggedInStaff = JSON.parse(window.localStorage.getItem('loggedStaff'));
+    this.getData();
       for (this.i = 0; this.i < this.coll.length; this.i++) {
         this.coll[this.i].addEventListener("click", function() {
           this.classList.toggle("active");

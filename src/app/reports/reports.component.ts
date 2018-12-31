@@ -25,9 +25,26 @@ export class ReportsComponent implements OnInit {
   }
   }
 
+  selectedDriverTransactions = [];
+  selectedDriver = {
+
+  }
+  getSum(a, b){
+    return a + b;
+  }
   pops(id){
     window.localStorage.setItem('edit', id);
     document.getElementById('myEdit2').style.display = "block"; 
+
+    this.selectedDriver['name'] = this.drivers.filter(el => el.id == id).map(elemenet => { return elemenet.name });
+    this.selectedDriver['phone'] = this.drivers.filter(el => el.id == id).map(elemenet => { return elemenet.phone });
+    this.selectedDriverTransactions = this.transaction.filter(el => el.owner_id === id && el.type === 'driver settlement').map(element => {
+      var totalBroker = [0];
+      this.loads.filter(el => el.transaction_number === element.id).map(el => { totalBroker.push(+el.charge)});
+      element.numberOfLoads = this.loads.filter(el => el.transaction_number === element.id).length;
+      element.total = totalBroker.reduce(this.getSum);
+      return element;
+    });
   }
 
   pop_close(){
@@ -61,6 +78,9 @@ export class ReportsComponent implements OnInit {
     console.log(e);
   }
 
+  picker;
+  pickers;
+
   drivers;
   loads;
   deduction;
@@ -76,20 +96,34 @@ export class ReportsComponent implements OnInit {
 
         this.allDriversSummary = this.drivers.map(driver => {
             driver.driverName = driver.name;
-            driver.totaLoads = this.loads.filter(load => load.driver_id == driver.id).length;
-            var charge = this.loads.filter(load => load.driver_id == driver.id).map(el => {
-              return +el.charge;
+            driver.totaLoads = this.loads.filter(load => load.driver_id == driver.id && load.settled === 'yes' && new Date(load.date_settled).getTime() > new Date(this.start).getTime() && new Date(load.date_settled).getTime() > new Date(this.end).getTime()).length;
+
+
+            var charge = [0]; 
+            this.loads.filter(load => load.driver_id == driver.id && load.settled === 'yes' && new Date(load.date_settled).getTime() > new Date(this.start).getTime() && new Date(load.date_settled).getTime() > new Date(this.end).getTime()).map(el => {
+              charge.push(+el.charge);
             })
-            var exp = this.deduction.filter(deduction => deduction.driver_id == driver.id && deduction.type === 'driver deductions').map(el => {
-              return +el.amount;
+            var exp = [0]
+            this.deduction.filter(deduction => deduction.driver_id == driver.id && deduction.type === 'driver settlement' && new Date(deduction.date).getTime() > new Date(this.start).getTime() && new Date(deduction.date).getTime() > new Date(this.end).getTime()).forEach(el => {
+            exp.push(+el.amount);
             })
 
-            var net = this.transaction.filter(transaction => transaction.owner_id == driver.id).map(el => {
-              return +el.amount;
-            })
+            // var net = [0]; 
+            // this.transaction.filter(transaction => transaction.owner_id == driver.id).map(el => {
+            //   net.push(+el.amount);
+            // })
 
-            var generalDeduction = this.deduction.filter(deduction => deduction.driver_id == driver.id && deduction.type !== 'driver deductions').map(el => {
-              return +el.amount;
+            var netC = [0];
+
+            this.transaction.filter(transaction => transaction.owner_id == driver.id && new Date(transaction.date).getTime() > new Date(this.start).getTime() && new Date(transaction.date).getTime() > new Date(this.end).getTime()).forEach(el => {
+              this.loads.filter(element => element.transaction_number === el.id).map(el => {
+                netC.push(+el.net_profit);
+              })
+             });
+
+            var generalDeduction = [0]; 
+            this.deduction.filter(deduction => deduction.driver_id === driver.id && deduction.type === 'Billed' && new Date(deduction.date).getTime() > new Date(this.start).getTime() && new Date(deduction.date).getTime() > new Date(this.end).getTime()).map(el => {
+              generalDeduction.push(+el.amount);
             })
 
             function getSum(total, num) {
@@ -97,15 +131,16 @@ export class ReportsComponent implements OnInit {
             }
             driver.totalCharge = charge.reduce(getSum);
             driver.expenses = exp.reduce(getSum);
-            driver.netPay = net.reduce(getSum);
-            driver.deductions = generalDeduction.length ? generalDeduction.reduce(getSum) : 0;
-            driver.final = (charge.reduce(getSum) * 0.12) - driver.deductions;
+            // driver.netPay = net.reduce(getSum);
+            driver.deductions = generalDeduction.reduce(getSum);
+            driver.final = netC.reduce(getSum);
 
             return driver;
         });
 
-        var totale = this.allDriversSummary.map(el => {
-          return +el.final;
+        var totale = [0];
+        this.allDriversSummary.map(el => {
+          totale.push(+el.final);
         })
     
         function getSum(total, num) {
@@ -145,7 +180,19 @@ export class ReportsComponent implements OnInit {
     i;
 
     total;
+    loggedInStaff
+    start = 0; 
+    end = 0;
+    changeStart(){
+      this.getData();
+    }
+
+    changeEnd(){
+      this.getData();
+    }
   ngOnInit() {
+
+    this.loggedInStaff = JSON.parse(window.localStorage.getItem('loggedStaff'));
     this.getData();
 
     for (this.i = 0; this.i < this.coll.length; this.i++) {

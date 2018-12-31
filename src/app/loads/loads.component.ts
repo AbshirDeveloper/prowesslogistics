@@ -110,6 +110,8 @@ export class LoadsComponent implements OnInit {
   }
 
   register_load(){
+    this.perMile || (this.load['miles'] = 'No Mile Given');
+    this.load['total'] = this.total;
     if(this.load['delivery_time'] && new Date(this.load['delivery_time']).getTime() > new Date(this.load['pick_up_date']).getTime()){
     this.service.post(this.load).subscribe(
       data => {},()=> this.ngOnInit())
@@ -151,10 +153,12 @@ export class LoadsComponent implements OnInit {
   }
 
   perMile = false;
+  loadWithTotalCharge;
 
   miles(a){
     this.perMile = (a === 'Mile' ? true : false);
     this.total = (a === 'Mile' ? +this.load['charge'] * +this.load['miles'] : +this.load['charge']);
+    this.load['total'] = this.total;
   }
   comments;
   unassign_info = {};
@@ -194,19 +198,22 @@ export class LoadsComponent implements OnInit {
     new Date(this.load['pick_up_date']).getTime() <= this.today ? document.getElementById('pick_error').style.display = 'block' : document.getElementById('pick_error').style.display = 'none'
     new Date(this.load['pick_up_date']).getTime() > this.today ? this.disabled = false : this.disabled = true;
      } else {
-      document.getElementById('pick_error').style.display = 'none'
+      document.getElementById('pick_error').style.display = 'none';
+      new Date(this.load['pick_up_date']).getTime() > this.today ? this.disabled = false : this.disabled = true;
      }
    }
 
    check_delivery(){
     if(this.loadTime === 'current'){
-    (new Date(this.load['load.delivery_time']).getTime() <= this.today || new Date(this.load['load.delivery_time']).getTime() < new Date(this.load['pick_up_date']).getTime()) ? document.getElementById('drop_error').style.display = 'block' : document.getElementById('drop_error').style.display = 'none'
+    (new Date(this.load['delivery_time']).getTime() < this.today || new Date(this.load['delivery_time']).getTime() < new Date(this.load['pick_up_date']).getTime()) ? document.getElementById('drop_error').style.display = 'block' : document.getElementById('drop_error').style.display = 'none'
     } else {
-    new Date(this.load['load.delivery_time']).getTime() < new Date(this.load['pick_up_date']).getTime() ? document.getElementById('drop_error').style.display = 'block' : document.getElementById('drop_error').style.display = 'none'
+    new Date(this.load['delivery_time']).getTime() < new Date(this.load['pick_up_date']).getTime() ? document.getElementById('drop_error').style.display = 'block' : document.getElementById('drop_error').style.display = 'none'
     new Date(this.load['pick_up_date']).getTime() ? this.disabled = false : this.disabled = true;
     }
    }
+  loggedInStaff;
   ngOnInit() {
+    this.loggedInStaff = JSON.parse(window.localStorage.getItem('loggedStaff'));
     this.switchToDriver();
     this.load['status'] = 'Needs Driver';
     this.load['charge'] = 0;

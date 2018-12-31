@@ -12,6 +12,8 @@ export class ServiceService {
 
   constructor(private http:HttpClient) { }
 
+  loggedInStaff;
+
   post(info){
     return this.http.post('http://localhost/~abshirjama/prowess/php/api/post.php',info);
   }

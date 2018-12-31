@@ -14,12 +14,12 @@
 				<a class="navbar-brand" href="#"><span>Prowess </span>Logistics</a>
 				<ul class="nav navbar-top-links navbar-right">
 					<li class="dropdown"><a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-						<em class="fa fa-bell"></em><span class="label label-danger">{{loadToBeBilled.length}}</span>
+						<em class="fa fa-bell"></em><span *ngIf="loadToBeBilled.length" class="label label-danger">{{loadToBeBilled.length}}</span>
 					</a>
-						<ul class="dropdown-menu dropdown-alerts">
-							<li *ngFor="let x of loadToBeBilled"><a href="#">
+						<ul *ngIf="loadToBeBilled.length" class="dropdown-menu dropdown-alerts">
+							<li *ngFor="let x of loadToBeBilled"><a routerLink="/loads">
 								<div><em class="fa fa-bullhorn color-red"></em> Submit Load #{{x.ref_id}}
-									<span class="pull-right text-muted small">{{x.late}} Days late</span></div>
+									<span style="font-weight:bold; color:red" class="pull-right text-muted small">{{x.late | number:'1.0-1'}} Days late</span></div>
 							</a></li>
 							<li class="divider"></li>
 						</ul>
@@ -34,9 +34,8 @@
 				<img src="http://placehold.it/50/30a5ff/fff" class="img-responsive" alt="">
 			</div>
 			<div class="profile-usertitle">
-				<div class="profile-usertitle-name">Abshir Jama</div>
-				<div *ngIf="em" class="profile-usertitle-status"><span class="indicator label-info"></span>EM</div>
-				<div *ngIf="ad" class="profile-usertitle-status"><span class="indicator label-success"></span>AD</div>
+				<div class="profile-usertitle-name">{{loggedStaff.name}}</div>
+				<div *ngIf="em" class="profile-usertitle-status"><span class="indicator label-info"></span>{{loggedStaff.type}}</div>
 			</div>
 			<div class="clear"></div>
 		</div>
@@ -47,14 +46,14 @@
 			<li routerLinkActive="actived current"><a routerLink="/dispatch"><em class="fa fa-calendar">&nbsp;</em> Disptach</a></li>
 			<!-- <li routerLinkActive="actived current"><a routerLink="/dispatch"><em class="fa fa-truck">&nbsp;</em> Dispatch</a></li> -->
 			<li routerLinkActive="actived current"><a routerLink="/loads"><em class="fa fa-toggle-off">&nbsp;</em> Loads</a></li>
-			<li routerLinkActive="actived current"><a routerLink="/reports"><em class="fa fa-clone">&nbsp;</em> Reports</a></li>
-			<li routerLinkActive="actived current"><a routerLink="/deductions"><em class="fa fa-minus-circle">&nbsp;</em> Operations</a></li>
+			<li *ngIf="loggedStaff.seeReports === '1'" routerLinkActive="actived current"><a routerLink="/reports"><em class="fa fa-clone">&nbsp;</em> Reports</a></li>
+			<li *ngIf="loggedStaff.payAdvance === '1'" routerLinkActive="actived current"><a routerLink="/deductions"><em class="fa fa-minus-circle">&nbsp;</em> Operations</a></li>
 			<li><a (click)="logout()"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
 		</ul>
 	</div><!--/.sidebar-->
 		
 	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
-			<router-outlet></router-outlet>
+			<router-outlet (activate)='onActivate($event)' (deactivate)='onDeactivate($event)'></router-outlet>
 	</div>	<!--/.main-->		
 </body>
 </html>
@@ -67,21 +66,65 @@
 		<div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4">
 			<div class="login-panel panel panel-default">
 				<div class="panel-heading">Log in</div>
+				<div style="color:red; text-align: center">{{error}}</div>
+				<div style="color:red; text-align: center">{{inactiveError}}</div>
+				<div style="color:green; text-align: center">{{resetSuccess}}</div>
 				<div class="panel-body">
-					<form role="form">
+					<form ngNativeValidate role="form" (submit)="_login()">
 						<fieldset>
 							<div class="form-group">
-								<input class="form-control" placeholder="E-mail" name="email" type="email" [(ngModel)]="info.username" autofocus="">
+								<input class="form-control" placeholder="E-mail" name="email" type="email" [(ngModel)]="info.email" autofocus="" required>
 							</div>
 							<div class="form-group">
-								<input class="form-control" placeholder="Password" name="password" type="password" [(ngModel)]="info.password" value="">
+								<input class="form-control" placeholder="Password" name="password" type="password" [(ngModel)]="info.password" value="" required>
 							</div>
-							<div class="checkbox">
+							<!-- <div class="checkbox">
 								<label>
 									<input name="remember" type="checkbox" value="Remember Me">Remember Me
 								</label>
+							</div> -->
+							<input type="submit" value="Login" class="btn btn-primary">
+							<!-- <a (click)="_login()" class="btn btn-primary" (click)="_login()">Login</a> -->
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div><!-- /.col-->
+	</div><!-- /.row -->	
+<script src="assets/js/jquery-1.11.1.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/jquery-1.11.1.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/chart.min.js"></script>
+<script src="assets/js/chart-data.js"></script>
+<script src="assets/js/easypiechart.js"></script>
+<script src="assets/js/easypiechart-data.js"></script>
+<script src="assets/js/bootstrap-datepicker.js"></script>
+<script src="assets/js/custom.js"></script>
+</body>
+</html>
+
+<html *ngIf="reset">
+<head>
+</head>
+<body>
+	<div class="row">
+		<div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4">
+			<div class="login-panel panel panel-default">
+				<div class="panel-heading">Password Reset</div>
+				<div style="color:red; text-align: center">{{errorUnequalPassword}}</div>
+				<div class="panel-body">
+					<form ngNativeValidate role="form" (submit)="resetPassword()">
+						<fieldset>
+							<div class="form-group">
+								<input class="form-control" placeholder="New Password" name="email" type="password" [(ngModel)]="resetPass.newPasswordOne" autofocus="" required>
 							</div>
-							<a (click)="_login()" class="btn btn-primary">Login</a></fieldset>
+							<div class="form-group">
+								<input class="form-control" placeholder="Confirm Password" name="password" type="password" [(ngModel)]="resetPass.newPasswordTwo" value="" (change)="checkEquality()" required>
+							</div>
+							<input type="submit" value="Reset" class="btn btn-primary">
+							<!-- <a (click)="_login()" class="btn btn-primary" (click)="_login()">Login</a> -->
+						</fieldset>
 					</form>
 				</div>
 			</div>

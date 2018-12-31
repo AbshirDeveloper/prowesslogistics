@@ -6,29 +6,39 @@ class everything {
     // public 
 
     public static function password_encrypt($password) {
-        $hash_format = "$2y$10$";   
-        $salt_length = 22; 					
-        $salt = static::generate_salt($salt_length);
+        $hash_format = "$2y$10$";
+        $salt = "Salt22charactersormore";
         $format_and_salt = $hash_format . $salt;
         $hash = crypt($password, $format_and_salt);
         return $hash;
     }
 
-    public static function generate_salt($length) {
-        $unique_random_string = md5(uniqid(mt_rand(), true));
-        $base64_string = base64_encode($unique_random_string);
-        $modified_base64_string = str_replace('+', '.', $base64_string);
-        $salt = substr($modified_base64_string, 0, $length);
-        return $salt;
-    }
+    // public static function generate_salt($length) {
+    //     $unique_random_string = md5(uniqid(mt_rand(), true));
+    //     $base64_string = base64_encode($unique_random_string);
+    //     $modified_base64_string = str_replace('+', '.', $base64_string);
+    //     $salt = substr($modified_base64_string, 0, $length);
+    //     return $salt;
+    // }
 
     public static function login($username, $password){
-        $hashed = password_encrypt($password);
+        $data = array();
+        $hash_format = "$2y$10$";
+        $salt = "Salt22charactersormore";
+        $format_and_salt = $hash_format . $salt;
+        $hash = crypt($password, $format_and_salt);
         global $connection;
-        $query = "select * from login where username = {$username} and password = {$hashed}";
+        $query = "select * from staff where email = '{$username}' and password = '{$hash}'";
+        $result = mysqli_query($connection, $query);
+
         $result = mysqli_query($connection, $query);
         if($result){
-            return true;
+            while($array = mysqli_fetch_array($result)){
+                $data[] = $array;
+            }
+        } 
+        if($data){
+            return $data;
         } else {
             return false;
         }

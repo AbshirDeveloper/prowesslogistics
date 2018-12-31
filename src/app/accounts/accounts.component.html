@@ -1,9 +1,9 @@
 
   <form>
-        <input type="text" placeholder=" Search..." />
+        <input type="text" placeholder=" Search..." name="search" [(ngModel)]="search"/>
   </form>
   <div class="table-responsive-vertical shadow-z-1">
-      <button *ngIf="selected_loads.length > 1" style="float:right; width: 10%; color: black;" class="btn btn-success">Bill {{selected_loads.length}} loads</button>
+      <button *ngIf="selected_loads.length > 1" style="float:right; width: 10%; color: black;" class="btn btn-success" (click)="pop_group()">Bill {{selected_loads.length}} loads</button>
   <table id="table" class="table table-hover table-mc-light-blue">
       <thead>
         <tr>
@@ -13,26 +13,30 @@
           <th>D/L & Time</th>
           <th>Miles</th>
           <th>Driver</th>
-          <th>Truck</th>
-          <th>Trailer</th>
+          <th>Charges</th>
           <th>Status</th>
           <th>Billed?</th>
-          <th>Actions</th>
+          <th>Billed Date</th>
+          <th>Net Pay</th>
+          <!-- <th>Actions</th> -->
         </tr>
       </thead>
-      <tbody *ngFor="let x of loads">
+      <tbody *ngFor="let x of loads | filterLoads:search">
         <tr *ngIf="x.billed !== 'Yup' && today > x.epoch" style="background-color:rgb(238, 219, 212); color:black">
-          <td data-title="ID"><input data-title="ID" type="checkbox" name="selection" [(ngModel)]="x.selected" (change)="selected()" id="" enabled></td>
+          <td *ngIf="popped == false" data-title="ID"><input data-title="ID" type="checkbox" name="selection" [(ngModel)]="x.selected" (change)="selected()" id="" enabled></td>
+          <td *ngIf="popped == true" data-title="ID"><input data-title="ID" type="checkbox" name="selection" [(ngModel)]="x.selected" (change)="selected()" id="" disabled></td>
           <td data-title="ID">{{x.ref_id}}</td>
           <td data-title="Name">{{x.pick_up}}<span style="display:block">{{x.pick_up_date | date:'medium'}}</span></td>
           <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
           <td data-title="Status">{{x.miles}}</td>
           <td data-title="Status">{{x.driver}}</td>
-          <td data-title="Status">{{x.truck_number}}</td>
-          <td data-title="Status">{{x.trailer_number}}</td>
-          <td data-title="Status">{{x.status}}</td>
-          <td data-title="Status"><i style="color: red">{{x.billed}}</i></td>
-          <td data-title="Status"><a style="font-weight:bold" (click)="pops(1)">Bill It Now</a></td>
+          <td data-title="Status">{{x.charge | currency}}</td>
+          <td data-title="Status">Delivered</td>
+          <td *ngIf="loggedInStaff.billing === '1'" data-title="Status"><a (click)="pops(x.id)" style="color: red">{{x.billed}}</a></td>
+          <td *ngIf="loggedInStaff.billing !== '1'" data-title="Status">Not billed</td>
+          <td data-title="Status">{{x.billed_date}}</td>
+          <td data-title="Status">{{x.net_profit | currency }}</td>
+          <!-- <td data-title="Status"><a style="font-weight:bold" >Bill It Now</a></td> -->
         </tr>
         <tr *ngIf="x.billed === 'Yup' && today > x.epoch">
           <td data-title="ID"><input data-title="ID" type="checkbox" name="" id="" disabled></td>
@@ -41,48 +45,89 @@
           <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
           <td data-title="Status">{{x.miles}}</td>
           <td data-title="Status">{{x.driver}}</td>
-          <td data-title="Status">{{x.truck_number}}</td>
-          <td data-title="Status">{{x.trailer_number}}</td>
-          <td data-title="Status">{{x.status}}</td>
+          <td data-title="Status">{{x.charge | currency}}</td>
+          <td data-title="Status">Delivered</td>
           <td style="color: green" data-title="Status"><i style="color: green">{{x.billed}}</i></td>
-          <td data-title="Status"><a (click)="pops(1)">View</a></td>
+          <td data-title="Status">{{x.billed_date}}</td>
+          <td data-title="Status">{{x.net_profit | currency }}</td>
+          <!-- <td data-title="Status"><a (click)="pops(x.id)">View</a></td> -->
         </tr>
       </tbody>
     </table>
   </div>
-<div id="myEdit2" class="modal">
+<div id="myEdit2" class="modal" style="margin-top: 15px;">
     <!-- Modal content -->
     <div class="modal-content">
       <button (click)="pop_close()" class="close">&times;</button>
-      <!DOCTYPE html>
-      <html lang="en">
-      <body>
-      <div style="text-align: center; padding-right: 0%; padding-left: 0%; width: 100%" class="container">
-      <!-- <table class="table table-striped">
-           <thead>
-             <tr>
-               <th>Date</th>
-               <th>Description</th>
-               <th>Amount</th>
-               <th>Credit</th>
-               <th>Balance</th>
-               <th>Initials</th>
-             </tr>
-           </thead>
-           <tbody>
-             <tr>
-               <td>date</td>
-               <td>some description</td>
-               <td>something else</td>
-               <td>something else</td>
-               <td>something else</td>
-               <td>something else</td>
-             </tr>
-           </tbody>
-         </table> -->
-        </div>
-      </body>
-      </html>
+      <div style="padding-right: 0%; padding-left: 0%; padding-bottom: 10px; width: 100%" class="container">
+          <table id="table" class="table table-hover table-mc-light-blue">
+              <thead>
+                <tr>
+                  <th>Load#</th>
+                  <th>P/L & Time</th>
+                  <th>D/L & Time</th>
+                  <th>Miles</th>
+                  <th>Driver</th>
+                  <th>Truck</th>
+                  <th>Trailer</th>
+                  <th>Charges</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let x of selected_loads">
+                <tr *ngIf="x.billed !== 'Yup' && today > x.epoch" style="background-color:lightgreen; color:black">
+                  <td data-title="ID">{{x.ref_id}}</td>
+                  <td data-title="Name">{{x.pick_up}}<span style="display:block">{{x.pick_up_date | date:'medium'}}</span></td>
+                  <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
+                  <td data-title="Status">{{x.miles}}</td>
+                  <td data-title="Status">{{x.driver}}</td>
+                  <td data-title="Status">{{x.truck_number}}</td>
+                  <td data-title="Status">{{x.trailer_number}}</td>
+                  <td data-title="Status">{{x.charge | currency}}</td>
+                </tr>
+              </tbody>
+              <tbody>
+                  <tr>
+                      <td data-title="ID"></td>
+                      <td data-title="Name"></td>
+                      <td data-title="Link"></td>
+                      <td data-title="Status"></td>
+                      <td data-title="Status"></td>
+                      <td data-title="Status"></td>
+                      <td data-title="Status">Total:</td>
+                      <td style="font-weight: bold; color: blue" data-title="Status">{{totalForLoads | currency }}</td>
+                    </tr>
+              </tbody>
+              <tbody>
+                  <tr>
+                      <td data-title="ID"></td>
+                      <td data-title="Name"></td>
+                      <td data-title="Link"></td>
+                      <td data-title="Status"></td>
+                      <td data-title="Status">Factoring 2.95%:</td>
+                      <td style="font-weight: bold; color: blue" data-title="Status">{{this.factoring | currency }}</td>
+                      <td data-title="Status">Total Af Factoring:</td>
+                      <td style="font-weight: bold; color: blue" data-title="Status">{{totalForLoads - factoring | currency }}</td>
+                    </tr>
+              </tbody>
+            </table>
+          <table id="tables" style="width: 35%; float:right; border-bottom: none; border-top: none;" class="table table-hover table-mc-light-blue">
+              <tr *ngFor="let x of summaryArray">
+                <th style="float:left">{{x.description}}</th>
+                <td style="float: right">{{x.deduction | currency }}</td>
+              </tr>
+              <hr>
+              <span style="float: right">{{ total | currency }}</span>
+              <button (click)="registerTransaction()">Bill this total --></button>
+          </table>
+          <form style="padding-bottom: 100px;">
+              <button *ngIf="disabled" id="filldetails" (click)="addDeduction()">Add Deductions <i class="fa fa-plus" ></i></button> <br />
+              <div formArray="deductions" class="input-group" *ngFor="let deduction of userForm.get('deductions').controls; let i = index">
+                  <button style="margin-top:2%;" (click)="deleteDeduction(i)"><i class="fa fa-trash" aria-hidden="true" style="font-size: 4rem;"></i></button>
+                  <input style="width: 300px; float: left;" type="text" id="content[i].description" class="form-control" name="description{{i}}" [(ngModel)]="content[i].description" placeholder="Description">
+                  <input style="width: 100px; float: left;" type="number" id="content[i].deduction" class="form-control" name="deduction{{i}}" [(ngModel)]="content[i].deduction" (change)="totalCalculate()" placeholder="$">
+              </div>
+            </form>
+      </div>
     </div>
   
   </div>

@@ -132,7 +132,7 @@
                     <th>Account #</th>
                     <th>Email</th>
                     <th>Phone #</th>
-                    <th>Action</th>
+                    <th *ngIf="loggedInStaff.deletion === '1'">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -147,7 +147,7 @@
                     <td data-title="Status">{{x.account_number}}</td>
                     <td data-title="Status">{{x.email}}</td>
                     <td data-title="Status">{{x.phone}}</td>
-                    <td data-title="Status">&nbsp;
+                    <td *ngIf="loggedInStaff.deletion === '1'" data-title="Status">&nbsp;
                       <i (click)="setForDelet(x.id, 'dispatcher')" style="color: red" class="fa fa-trash" aria-hidden="true"></i></td>
                   </tr>
                 </tbody>
@@ -170,7 +170,7 @@
               <th>Phone</th>
               <th>Truck# (if any)</th>
               <th>Trailer# (if any)</th>
-              <th>Action (if Driver)</th>
+              <th *ngIf="loggedInStaff.deletion === '1'">Action (if Driver)</th>
             </tr>
           </thead>
           <tbody *ngFor="let x of driverList | filter:search">
@@ -182,7 +182,7 @@
               <td data-title="Status">{{x.phone}}</td>
               <td data-title="Status">{{x.truck_number}}</td>
               <td data-title="Status">{{x.trailer_number}}</td>
-              <td data-title="Status" style="color: blue; font-weight: bold; font-size: 20px">
+              <td *ngIf="loggedInStaff.deletion === '1'" data-title="Status" style="color: blue; font-weight: bold; font-size: 20px">
                 &nbsp;
                 <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i>
               </td>
@@ -195,7 +195,7 @@
                 <td data-title="Status">{{x.phone}}</td>
                 <td data-title="Status">{{x.truck_number}}</td>
                 <td data-title="Status">{{x.trailer_number}}</td>
-                <td data-title="Status" style="color: blue; font-weight: bold; font-size: 20px">
+                <td *ngIf="loggedInStaff.deletion === '1'" data-title="Status" style="color: blue; font-weight: bold; font-size: 20px">
                   &nbsp;
                   <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i>
                 </td>
@@ -299,7 +299,7 @@
               <span class="slider round"></span>
             </label>
     </div>
-    <div class="table-responsive-vertical shadow-z-1">
+    <div *ngIf="settlibleLoads.length > 0" class="table-responsive-vertical shadow-z-1">
           <table id="table" class="table table-hover table-mc-light-blue">
               <thead>
                 <tr>
@@ -307,8 +307,8 @@
                   <th>Load #</th>
                   <th>P/L</th>
                   <th>D/L</th>
+                  <th>Broker Amount</th>
                   <th>Driver Pay</th>
-                  <th>Payroll Advance</th>
                 </tr>
               </thead>
               <tbody *ngFor="let x of driverPayableLoad">
@@ -317,16 +317,26 @@
                   <td data-title="ID">{{x.ref_id}}</td>
                   <td data-title="Name">{{x.pick_up}}<span style="display:block">{{x.pick_up_date | date:'medium'}}</span></td>
                   <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
-                  <td data-title="Status">{{x.charge * .88}}</td>
-                  <td data-title="Status">0</td>
+                  <td data-title="Status">{{x.charge | currency }}</td>
+                  <td data-title="Status">{{x.charge * .88 | currency }}</td>
                 </tr>
                 <tr *ngIf="x.drop > today">
                     <td data-title="ID"><input type="checkbox" name="selection" [(ngModel)]="x.select" (change)="calculateSelected()" disabled></td>
                     <td data-title="ID">{{x.ref_id}}</td>
                     <td data-title="Name">{{x.pick_up}}<span style="display:block">{{x.pick_up_date | date:'medium'}}</span></td>
                     <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
-                    <td data-title="Status">{{x.charge * .88}}</td>
-                    <td data-title="Status">0</td>
+                    <td data-title="Status">{{x.charge | currency }}</td>
+                    <td data-title="Status">{{x.charge * .88 | currency }}</td>
+                </tr>
+              </tbody>
+              <tbody>
+                <tr>
+                    <td data-title="ID"></td>
+                    <td data-title="ID"></td>
+                    <td data-title="Name"></td>
+                    <td data-title="Link"></td>
+                    <td data-title="Status">{{totalDriverAdvance.description}}</td>
+                    <td *ngIf="totalDriverAdvance.amount > 0" style="color:red" data-title="Status">{{totalDriverAdvance.amount | currency}}</td>
                 </tr>
               </tbody>
             </table>
@@ -337,8 +347,10 @@
                   <td style="float: right">{{x.deduction | currency }}</td>
                 </tr>
                 <hr>
-                <span style="float: right">{{ total | currency }}</span>
-                <button (click)="registerTransaction()">Settle this total --></button>
+                <span *ngIf="total > 0" style="float: right; color: green">{{ total | currency }}</span>
+                <span *ngIf="total < 0" style="float: right; color: red">{{ total | currency }}</span>
+                <button *ngIf="total > 0" (click)="registerTransaction()">Settle this total --></button>
+                <span *ngIf="total < 0" (click)="registerTransaction()" style="color:lightcoral" disabled>Negative Amount</span>
             </table>
             <form style="padding-bottom: 100px">
               <button *ngIf="disabled" id="filldetails" (click)="addDeduction()">Add Deductions <i class="fa fa-plus" ></i></button> <br>
