@@ -176,7 +176,7 @@
           <tbody *ngFor="let x of driverList | filter:search">
             <tr style="background-color:rgb(228, 185, 185);" *ngIf="x.status !== 'Active'">
               <td data-title="ID">{{x.date}}</td>
-              <td data-title="Name"><a (click)="pops(x.id)" style="color:blue">{{x.name}}<span *ngIf="x.ubilled.length" style="color:red"> ( {{x.ubilled.length}} Unbilled )</span></a></td>
+              <td data-title="Name"><a (click)="pops(x.id)" style="color:blue">{{x.name}}<span *ngIf="x.ubilled.length" style="color:red"> ({{x.ubilled.length}})</span></a></td>
               <td data-title="Link">{{x.type}}</td>
               <td data-title="Status">{{x.email}}</td>
               <td data-title="Status">{{x.phone}}</td>
@@ -184,12 +184,13 @@
               <td data-title="Status">{{x.trailer_number}}</td>
               <td *ngIf="loggedInStaff.deletion === '1'" data-title="Status" style="color: blue; font-weight: bold; font-size: 20px">
                 &nbsp;
-                <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i>
+                <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i> &nbsp;
+                <i (click)="editDriver(x.id)" style="color: chocolate" class="fa fa-edit" aria-hidden="true"></i>
               </td>
             </tr>
             <tr *ngIf="x.status === 'Active'">
                 <td data-title="ID">{{x.date}}</td>
-                <td data-title="Name"><a (click)="pops(x.id)" style="color:blue">{{x.name}}<span *ngIf="x.ubilled.length" style="color:red"> ( {{x.ubilled.length}} Unbilled )</span></a></td>
+                <td data-title="Name"><a (click)="pops(x.id)" style="color:blue">{{x.name}}<span *ngIf="x.ubilled.length" style="color:red"> ({{x.ubilled.length}})</span></a></td>
                 <td data-title="Link">{{x.type}}</td>
                 <td data-title="Status">{{x.email}}</td>
                 <td data-title="Status">{{x.phone}}</td>
@@ -197,7 +198,8 @@
                 <td data-title="Status">{{x.trailer_number}}</td>
                 <td *ngIf="loggedInStaff.deletion === '1'" data-title="Status" style="color: blue; font-weight: bold; font-size: 20px">
                   &nbsp;
-                  <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i>
+                  <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i> &nbsp;
+                  <i (click)="editDriver(x.id)" style="color: chocolate" class="fa fa-edit" aria-hidden="true"></i>
                 </td>
               </tr>
           </tbody>
@@ -207,7 +209,79 @@
 </div>
 <div id="myEdit2" class="modal">
   <!-- Modal content -->
-  <div class="modal-content">
+  <div id="modalTwo" class="modal-content">
+    <button (click)="pop_close()" class="close">&times;</button> <br/><br>
+    <div class="register">
+      <h3>Driver Edit</h3>
+      <form ngNativeValidate (submit)="submitDriverEdit()" id="reg-form">
+        <div>
+          <label for="name">Name</label>
+          <input type="text" id="name" spellcheck="false" placeholder="Name" name="name" [(ngModel)]="driverTobeEdited.name" required/>
+          <label for="email">Email</label>
+          <input type="text" id="email" spellcheck="false" placeholder="example@email.com" name="email" [(ngModel)]="driverTobeEdited.email" required/>
+          <!-- <input type="text" id="username" spellcheck="false" placeholder="shree33" /> -->
+          <label for="dob">DOB</label>
+          <input type="date" id="dob" name="dob" [(ngModel)]="driverTobeEdited.dob" required/>
+          <label for="address">Full Address</label>
+          <input type="text" id="address" placeholder="Full Address" name="address" [(ngModel)]="driverTobeEdited.address" required/>
+          <label for="name">Phone</label>
+          <input type="tel" id="phone" spellcheck="false" placeholder="phone#" name="phone" [(ngModel)]="driverTobeEdited.phone" required/>
+          <label for="name">DL</label>
+          <input type="tel" id="phone" spellcheck="false" placeholder="Driver's license #" name="license" [(ngModel)]="driverTobeEdited.license" required/>
+          <label for="name">DL Expiration</label>
+          <input type="date" id="phone" spellcheck="false" name="dl_expiration" [(ngModel)]="driverTobeEdited.dl_expiration" required/>
+          <div class="sep">
+              <span class="or">...</span>
+            </div>
+          <hr />
+          <label for="type">Driver Type</label>
+          <select name="type" id="" name="type" [(ngModel)]="driverTobeEdited.type" required>
+            <option value="contractor">Contractor</option>
+            <option value="employee">Employee</option>
+          </select>
+          <!-- <input type="text" id="email" spellcheck="false" placeholder="shridhardeshmukh@xyz.com"/> -->
+          <label for="id">Driver ID</label>
+          <input type="text" id="id" spellcheck="false" placeholder="Driver ID#" name="id" [(ngModel)]="driverTobeEdited.driver_id" required/>
+          <label for="experience">Experience</label>
+          <input type="text" id="experience" placeholder="Years or Months" name="experience" [(ngModel)]="driverTobeEdited.experience" required/>
+          <label for="expiration">DOT Medical card expiration</label>
+          <input type="date" id="expiration" name="expiration" [(ngModel)]="driverTobeEdited.dot_medical_card_expiration" required/>
+          <label for="name">Truck #</label>
+          <input type="text" id="hire_date" spellcheck="false" name="hire" [(ngModel)]="driverTobeEdited.truck_number" required/>
+          <label for="termination">Trailer #</label>
+          <input type="text" id="termination" spellcheck="false" name="termination" [(ngModel)]="driverTobeEdited.trailer_number" required/>
+          <div class="sep">
+              <span class="or">...</span>
+            </div>
+          <hr />
+          <label for="advance">Advance Money</label>
+          <select name="advance" id="" name="advance" [(ngModel)]="driverTobeEdited.advance_money_eligible" required>
+            <option value="eligible">Eligible</option>
+            <option value="not-eligible">Not Eligible</option>
+          </select>
+          <!-- <input type="text" id="username" spellcheck="false" placeholder="shree33" /> -->
+          <label for="insurance">Driver Insurance #</label>
+          <input type="text" id="insurance" placeholder="Driver insurance #" name="insurance" [(ngModel)]="driverTobeEdited.driver_insurance" required/>
+          <label for="company">Insurance Company</label>
+          <input type="text" id="insu_company" placeholder="Insurance Company Name" name="company" [(ngModel)]="driverTobeEdited.insurance_company" required/>
+          <label for="expire">Insurance Expiration</label>
+          <input type="date" id="expire" spellcheck="false" name="expiration_date" [(ngModel)]="driverTobeEdited.insurance_expiration_date" required/>
+          <label for="group_no">Group No:</label>
+          <input type="text" id="group_no" spellcheck="false" placeholder="Group #" name="group" [(ngModel)]="driverTobeEdited.group_no" required/>
+          <label for="id">ID no:</label>
+          <input type="text" id="id" spellcheck="false" placeholder="ID no:" name="id_number" [(ngModel)]="driverTobeEdited.id_no" required/>
+          <!-- <label for="password">Password</label>
+          <input type="password" id="password" />
+          <label for="password-again">Password Again</label>
+          <input type="password" id="password-again" /> -->
+          <label></label>
+          <input type="submit" value="Update Driver" id="create-account" class="button"/>
+        </div>
+      </form>
+  </div>
+
+  </div>
+  <div id="modalOne" class="modal-content">
       <h3 style="color:green; float: right;" *ngIf="selected_driver.status === 'Active'">{{selected_driver.status | titlecase}}</h3>
       <h3 style="color:red; float: right;" *ngIf="selected_driver.status !== 'Active'">{{selected_driver.status | titlecase}}</h3>
     <h1>{{selected_driver.name | titlecase}}</h1>
@@ -363,3 +437,4 @@
           </div>
   </div>
 </div>
+

@@ -55,7 +55,7 @@ export class DeductionsComponent implements OnInit {
     this.service.get().subscribe(
       data => {
         this.dispatchers = data[1]
-        this.drivers = data[0];
+        this.drivers = data[0].filter(el => el.advance_money_eligible === 'eligible');
         this.advancedLoads = data[6];
         this.staff = data[7];
       })

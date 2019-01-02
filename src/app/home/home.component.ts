@@ -15,7 +15,7 @@ export class HomeComponent implements OnInit {
   deduction;
   transaction;
   summary = {}
-
+  advance = {}
   today = Date.now();
   getData(){
     this.service.get().subscribe(
@@ -24,10 +24,11 @@ export class HomeComponent implements OnInit {
         this.loads = data[2]
         this.deduction = data[4]
         this.transaction = data[5];
+        this.advance = data[6];
 
         this.summary['activeLoad'] = this.loads.filter(load =>  new Date(load.delivery_time).getTime() > this.today).length;
         this.summary['dueForBilling'] = this.loads.filter(load =>  new Date(load.delivery_time).getTime() < this.today && load.billed === 'Nope, Bill it now').length;
-        this.summary['delinquent'] = 4;
+        this.summary['AllLoads'] = this.loads.length;
         this.summary['dueForSettlement'] = this.loads.filter(load =>  new Date(load.delivery_time).getTime() < this.today && load.settled !== 'yes').length;
       })
   }

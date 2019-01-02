@@ -8,6 +8,7 @@
           <option value="current">Current Load</option>
           <option value="past">Past Load</option>
         </select>
+        <span style="margin-left:45%; color: red">{{loadNumberError}}</span>
       <form ngNativeValidate id="reg-form" (submit)="register_load()">
           <div>
             <label for="name">Load Status</label>
@@ -20,7 +21,7 @@
               <option value="planning">Active Load</option>
             </select>
             <label for="ref_id">Load Ref ID</label>
-            <input type="text" id="ref_id" spellcheck="false" placeholder="Load Ref ID" name="ref_id" [(ngModel)]="load.ref_id" required/>
+            <input type="text" id="ref_id" spellcheck="false" placeholder="Load Ref ID" name="ref_id" [(ngModel)]="load.ref_id" (change)="checkLoadNumber()" required/>
             <label for="eq_type">Equipment Type</label>
             <select name="eq_type" id="" name="eq_type" [(ngModel)]="load.eq_type" required>
               <option value="Van">Van</option>
@@ -124,7 +125,8 @@
                   <td data-title="Status">{{x.truck_number}}</td>
                   <td data-title="Status">{{x.status}}</td>
                   <td *ngIf="loggedInStaff.dispatching === '1'" data-title="Status">
-                    <a (click)="pops(x.id)" style="color: black" class="btn btn-success">Dispatch Now</a> &nbsp; &nbsp;
+                    <!-- <a style="color: black" class="btn btn-success">Dispatch Now</a>  -->
+                    <i (click)="pops(x.id)" style="color: green; font-size:x-large" class="fa fa-truck" aria-hidden="true"></i> &nbsp;
                     <i (click)="setForDelete(x.id, 'loads')" style="color: red; font-size:x-large" class="fa fa-trash" aria-hidden="true"></i>
                   </td>
                 </tr>

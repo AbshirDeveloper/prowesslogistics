@@ -28,7 +28,7 @@ export class LoadsComponent implements OnInit {
     this.selected_driver = [];
     this.service.get().subscribe(
       data => {
-        data[0].forEach(element => {
+        data[0].filter(el => el.status === 'Active').forEach(element => {
           if(element.name === this.search_drop){
             this.selected_driver = element;
           }
@@ -86,7 +86,7 @@ export class LoadsComponent implements OnInit {
     this.service.get().subscribe(
       data => {
         this.loads = data[2];
-        this.drivers = data[0];
+        this.drivers = data[0].filter(el => el.status === 'Active');
         this.carriers = data[3];
     }
     )
@@ -109,7 +109,19 @@ export class LoadsComponent implements OnInit {
       data => {},()=> this.getData())
   }
 
+  loadNumberError
+  itExists;
+  checkLoadNumber(){
+    const load_exist = this.loads.filter(el => el.ref_id === this.load['ref_id']);
+    load_exist.length > 0 ? this.loadNumberError = 'This load exists' : this.loadNumberError = null;
+    this.itExists = load_exist.length > 0 ? true : false;
+  }
+
   register_load(){
+    if(this.itExists){
+    alert('this load exists');
+    return false;
+    } else {
     this.perMile || (this.load['miles'] = 'No Mile Given');
     this.load['total'] = this.total;
     if(this.load['delivery_time'] && new Date(this.load['delivery_time']).getTime() > new Date(this.load['pick_up_date']).getTime()){
@@ -120,6 +132,7 @@ export class LoadsComponent implements OnInit {
       alert('please check the pick up and the drop dates');
       return false;
     }
+  }
   }
   pickup;
   dropp;
@@ -143,7 +156,8 @@ export class LoadsComponent implements OnInit {
   }
 
   pop_close(){
-    document.getElementById('myEdit2').style.display = "none"; 
+    document.getElementById('myEdit2').style.display = "none";
+    this.ngOnInit(); 
   }
   coll = document.getElementsByClassName("collapsible");
   i;
@@ -199,7 +213,7 @@ export class LoadsComponent implements OnInit {
     new Date(this.load['pick_up_date']).getTime() > this.today ? this.disabled = false : this.disabled = true;
      } else {
       document.getElementById('pick_error').style.display = 'none';
-      new Date(this.load['pick_up_date']).getTime() > this.today ? this.disabled = false : this.disabled = true;
+      new Date(this.load['pick_up_date']).getTime() < this.today ? this.disabled = false : this.disabled = true;
      }
    }
 

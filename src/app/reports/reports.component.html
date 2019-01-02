@@ -69,7 +69,7 @@
       <td data-th="Gross">{{x.expenses | currency }}</td>
       <td data-th="Year">{{x.totalCharge * .88 - x.expenses | currency }}</td>
       <td data-th="Year">{{x.deductions + (x.totalCharge * .0295) | currency }}</td>
-      <td data-th="Gross">{{x.totalCharge * .12 - (x.deductions + (x.totalCharge * .0295))  | currency }}</td>
+      <td data-th="Gross">{{x.finals | currency }}</td>
     </tr>
   </table>
 </div>
@@ -93,7 +93,7 @@
                   <th>Driver Paid</th>
                 </tr>
               </thead>
-              <tbody *ngFor="let x of selectedDriverTransactions | filterDate: start | filterDate: end">
+              <tbody *ngFor="let x of selectedDriverTransactions | filterDateStart: start | filterDateEnd: end">
                 <tr>
                   <td data-title="ID">{{x.date}}</td>
                   <td data-title="Status">{{x.id}}</td>

@@ -53,7 +53,7 @@ import { DeductionsComponent } from './deductions/deductions.component';
 import { HomeComponent } from './home/home.component';
 import { BankFeesComponent } from './bank-fees/bank-fees.component';
 import { ChargeBacksComponent } from './charge-backs/charge-backs.component';
-import { FilterPipe, FilterLoadsPipe, FilterDatePipe } from './utils/filter.pipe';
+import { FilterPipe, FilterLoadsPipe, FilterDateStartPipe, FilterDateEndPipe } from './utils/filter.pipe';
 
 @NgModule({
   declarations: [
@@ -69,7 +69,8 @@ import { FilterPipe, FilterLoadsPipe, FilterDatePipe } from './utils/filter.pipe
     ChargeBacksComponent,
     FilterPipe,
     FilterLoadsPipe,
-    FilterDatePipe
+    FilterDateStartPipe,
+    FilterDateEndPipe
   ],
   imports: [
     ReactiveFormsModule,

@@ -58,7 +58,7 @@ if(isset($data->broker_type)){
         );
     }
     $response = $public->insert($registration, $table);
-} else if (isset($data->dob)) {
+} else if (isset($data->registeringDriver)) {
     $table = 'driver';
     $registration = array(
         "date"=>date('m/d/Y'),
@@ -84,7 +84,7 @@ if(isset($data->broker_type)){
         "id_no"=>$data->id_no
 );
 $response = $public->insert($registration, $table);
-} else if( isset($data->charge )) {
+} else if( isset($data->charge)) {
     $table = 'loads';
     $registration = array(
         "billed"=>"Nope, Bill it now", 
@@ -131,15 +131,50 @@ $response = $public->insert($registration, $table);
 } else if (isset($data->owner_id)){
     $table = 'transactions';
     $registration = array(
-    "type"=>$data->type, 
-    "date"=>date('m/d/Y'),
-    "amount"=>$data->amount,
-    "owner_id"=>$data->owner_id,
-    "total_deductions"=>$data->total_deductions,
-    "number_of_loads"=>$data->number_of_loads,
-    "afterFactoring"=>$data->afterFactoring
+        "type"=>$data->type, 
+        "date"=>date('m/d/Y'),
+        "amount"=>$data->amount,
+        "owner_id"=>$data->owner_id,
+        "total_deductions"=>$data->total_deductions,
+        "number_of_loads"=>$data->number_of_loads,
+        "afterFactoring"=>$data->afterFactoring
     );
     $response = $public->insert($registration, $table);
+
+    if($data->selectedLoads) {
+        $returnedTransaction = $public->select("transactions", "where owner_id = $data->owner_id");
+        $number = $returnedTransaction[0]['id'];
+        $today = date('m/d/Y');
+    foreach ($data->selectedLoads as $value) {
+    $loadUpdateForTransaction = "update loads set settled = 'yes', date_settled = '{$today}', transaction_number = {$number} where id = '{$value}'";
+    $public->query($loadUpdateForTransaction);
+    }
+    } else if($data->selectedLoad){
+        $returnedTransaction = $public->select("transactions", "where owner_id = $data->owner_id");
+        $number = $returnedTransaction[0]['id'];
+        $today = date('m/d/Y');
+        foreach ($data->selectedLoad as $value) {
+        $loadUpdateForTransaction = "update loads set billed = 'Yup', billed_date = '{$today}', net_profit = {$value->netProfit} where id = '{$value->id}'";
+        $public->query($loadUpdateForTransaction);  
+        }
+    }
+
+    foreach ($data->deductions as $value) {
+    $deductionRegistration = array(
+        "type"=>"{$data->type}",  
+        "date"=>date('m/d/Y'),
+        "amount"=>$value->deduction,
+        "description"=>$value->description,
+        "driver_id"=>$data->owner_id,
+        "transaction_number"=>$number
+    );
+    $public->insert($deductionRegistration, 'deductions');
+    }
+
+    $updateAdvance = "Update advance set paid = 'yes' where owner_id = $data->owner_id";
+    $public->query($updateAdvance);
+    echo json_encode($data);
+
 } else if (isset($data->toA)) {
     if($data->toA === 'Driver'){
     $returnedTransaction = $public->select("driver", "where id = $data->id");
@@ -150,12 +185,12 @@ $response = $public->insert($registration, $table);
     }
     $table = 'advance';
     $registration = array(
-    "toA"=>$data->toA, 
-    "date"=>date('m/d/Y'),
-    "amount"=>$data->amount,
-    "load_number"=>$data->loadNumber,
-    "owner_id"=>$data->id,
-    "name"=>$name
+        "toA"=>$data->toA, 
+        "date"=>date('m/d/Y'),
+        "amount"=>$data->amount,
+        "load_number"=>$data->loadNumber,
+        "owner_id"=>$data->id,
+        "name"=>$name
     );
     $response = $public->insert($registration, $table);
 } else if (isset($data->delete)) {
@@ -183,22 +218,22 @@ $response = $public->insert($registration, $table);
     $response = $public->insert($registration, $table);
 } else if (isset($data->updatingStaff)) {
     $loadUpdateStaff = "update staff set 
-    name = '{$data->name}', 
-    phone = '{$data->phone}', 
-    email = '{$data->email}', 
-    registration = '{$data->registration}',
-    deletion = '{$data->deletion}',
-    dispatching = '{$data->dispatching}',
-    billing = '{$data->billing}',
-    seeReports = '{$data->seeReports}',
-    payAdvance = '{$data->payAdvance}',
-    status = '{$data->status}'
-    where id = $data->id";
+        name = '{$data->name}', 
+        phone = '{$data->phone}', 
+        email = '{$data->email}', 
+        registration = '{$data->registration}',
+        deletion = '{$data->deletion}',
+        dispatching = '{$data->dispatching}',
+        billing = '{$data->billing}',
+        seeReports = '{$data->seeReports}',
+        payAdvance = '{$data->payAdvance}',
+        status = '{$data->status}'
+        where id = $data->id";
     $public->query($loadUpdateStaff);
 } else if (isset($data->password)) {
     $response = $public->login($data->email, $data->password);
     echo json_encode($response);
-} else if ($data->newPasswordOne){
+} else if (isset($data->newPasswordOne)){
     $password = $public->password_encrypt($data->newPasswordOne);
     $passwordReset = "update staff set 
     password = '{$password}', reset = '' where id = $data->id limit 1";
@@ -209,71 +244,91 @@ $response = $public->insert($registration, $table);
     echo json_encode('failed');
     }
     
-} else if ($data->staffDeleting) {
+} else if (isset($data->staffDeleting)) {
     $query = "delete from staff where id = $data->id limit 1";
     $public->query($query);
-}
-
-
-if(isset($data->driver)){
-$loadUpdateQuery = "update loads set 
-driver = '{$data->driver->name}', 
-driver_id = '{$data->driver->id}', 
-assigned = 1, 
-truck_number = '{$data->driver->truck_number}', 
-trailer_number = '{$data->driver->trailer_number}', 
-status = 'Assigned' 
-where id = '{$data->load->id}' limit 1";
+} else if(isset($data->driver)){
+    $loadUpdateQuery = "update loads set 
+        driver = '{$data->driver->name}', 
+        driver_id = '{$data->driver->id}', 
+        assigned = 1, 
+        truck_number = '{$data->driver->truck_number}', 
+        trailer_number = '{$data->driver->trailer_number}', 
+        status = 'Assigned' 
+        where id = '{$data->load->id}' limit 1";
+$public->query($loadUpdateQuery);
 } else if(isset($data->carrier)) {
-$loadCarrier = "update loads set 
-carrier = '{$data->carrier->company_name}', 
-assigned = 1, 
-carrier_contact_name = '{$data->carrier->contact_name}', 
-carrier_contact_phone = '{$data->carrier->phone}', 
-status = 'Assigned to a Carrier ({$data->carrier->company_name})'
-where id = '{$data->load->id}' limit 1";
+    $loadCarrier = "update loads set 
+        carrier = '{$data->carrier->company_name}', 
+        assigned = 1, 
+        carrier_contact_name = '{$data->carrier->contact_name}', 
+        carrier_contact_phone = '{$data->carrier->phone}', 
+        status = 'Assigned to a Carrier ({$data->carrier->company_name})'
+        where id = '{$data->load->id}' limit 1";
+    $public->query($loadCarrier);
+} else if (isset($data->toBeEdited)){
+    $driverUpdate = "update driver set 
+        name = '{$data->name}', 
+        email = '{$data->email}', 
+        dob = '{$data->dob}', 
+        address = '{$data->address}', 
+        phone = '{$data->phone}',
+        type = '{$data->type}', 
+        experience = '{$data->experience}',
+        license ='{$data->license}', 
+        dl_expiration = '{$data->dl_expiration}',
+        dot_medical_card_expiration = '{$data->dot_medical_card_expiration}', 
+        truck_number = '{$data->truck_number}', 
+        trailer_number = '{$data->trailer_number}',
+        advance_money_eligible = '{$data->advance_money_eligible}',
+        driver_insurance = '{$data->driver_insurance}',
+        insurance_company = '{$data->insurance_company}',
+        insurance_expiration_date = '{$data->insurance_expiration_date}',
+        group_no = '{$data->group_no}',
+        id_no = $data->id_no
+        where id = $data->id";
+
+    $public->query($driverUpdate);  
+} else if (isset($data->loadToBeEdited)){
+
+    $loadUpdate = "update load set
+        truck_number = $data->truck_number,
+        trailer_number = $data->trailer_number,
+        miles = $data->miles,
+        status = $data->status,
+        ref_id =  $data->ref_id, 
+        eq_type = $data->eq_type,
+        length = $data->length, 
+        temp = $data->temp, 
+        size = $data->size,
+        commo = $data->commo, 
+        weight = $data->weight, 
+        notes = $data->notes,
+        shipper = $data->shipper, 
+        pick_up = $data->pick_up,
+        pick_up_date = $data->pick_up_date,
+        shipper_notes = $data->shipper_notes,
+        contact = $data->contact,
+        phone = $data->phone,
+        receiver = $data->receiver,
+        drop_off = $data->drop_off, 
+        delivery_time = $data->delivery_time,
+        instruction = $data->instructions,
+        contact_person = $data->contact_person,
+        contact_phone = $data->contact_phone,
+        rate = $data->rate,
+        charge = $data->total
+        where id = $data->id";
+
+        $public->query($loadUpdate); 
 }
 // if(isset($data)){
     
 // };
 
-if(isset($data->owner_id)) {
-    if($data->selectedLoads) {
-        $returnedTransaction = $public->select("transactions", "where owner_id = $data->owner_id");
-        $number = $returnedTransaction[0]['id'];
-        $today = date('m/d/Y');
-    foreach ($data->selectedLoads as $value) {
-    $loadUpdateForTransaction = "update loads set settled = 'yes', date_settled = '{$today}', transaction_number = {$number} where id = '{$value}'";
-    $public->query($loadUpdateForTransaction);
-    }
-    } else if($data->selectedLoad){
-        $returnedTransaction = $public->select("transactions", "where owner_id = $data->owner_id");
-        $number = $returnedTransaction[0]['id'];
-        $today = date('m/d/Y');
-        foreach ($data->selectedLoad as $value) {
-        $loadUpdateForTransaction = "update loads set billed = 'Yup', billed_date = '{$today}', net_profit = {$value->netProfit}, transaction_number = {$number} where id = '{$value->id}'";
-        $public->query($loadUpdateForTransaction);  
-        }
-    }
+// if(isset($data->owner_id)) {
 
-    foreach ($data->deductions as $value) {
-    $deductionRegistration = array(
-    "type"=>"{$data->type}",  
-    "date"=>date('m/d/Y'),
-    "amount"=>$value->deduction,
-    "description"=>$value->description,
-    "driver_id"=>$data->owner_id,
-    "transaction_number"=>$number
-    );
-
-    $updateAdvance = "Update advance set paid = 'yes' where owner_id = $data->owner_id";
-
-    echo json_encode($data);
-
-    $public->insert($deductionRegistration, 'deductions');
-    $public->query($updateAdvance);
-}
-}
+// }
 }
 ?>
 

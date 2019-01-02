@@ -10,7 +10,7 @@ export class FilterPipe implements PipeTransform {
       return x;
     }
     return x.filter(function(x){
-      return x.name.includes(search) || x.phone.includes(search);
+      return x.name.toLowerCase().includes(search) || x.phone.toLowerCase().includes(search);
     })
   }
   
@@ -34,9 +34,9 @@ export class FilterLoadsPipe implements PipeTransform {
 }
 
 @Pipe({
-  name: 'filterDate'
+  name: 'filterDateStart'
 })
-export class FilterDatePipe implements PipeTransform {
+export class FilterDateStartPipe implements PipeTransform {
 
   transform(x: any, search: any): any {
     if(search === undefined || search === null){
@@ -44,6 +44,22 @@ export class FilterDatePipe implements PipeTransform {
     }
     return x.filter(function(x){
       return new Date(x.date).getTime() > new Date(search).getTime()
+    })
+  }
+  
+}
+
+@Pipe({
+  name: 'filterDateEnd'
+})
+export class FilterDateEndPipe implements PipeTransform {
+
+  transform(x: any, search: any): any {
+    if(search === undefined || search === null){
+      return x;
+    }
+    return x.filter(function(x){
+      return new Date(x.date).getTime() < new Date(search).getTime()
     })
   }
   

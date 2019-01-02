@@ -55,6 +55,7 @@ export class AddressBookComponent implements OnInit {
   dispatcher_info = {}
 
   register_driver(){
+    this.driver_info['registeringDriver'] = 'yes';
     this.service.post(this.driver_info).subscribe(
       data => {},()=> this.getData())
       this.driver_info = {};
@@ -162,6 +163,8 @@ export class AddressBookComponent implements OnInit {
     )
     window.localStorage.setItem('edit', id);
     document.getElementById('myEdit2').style.display = "block"; 
+    document.getElementById('modalOne').style.display = "block"; 
+    document.getElementById('modalTwo').style.display = "none"; 
   }
 
   pop_close(){
@@ -248,11 +251,28 @@ export class AddressBookComponent implements OnInit {
     function getSum(total, num) {
     return total + num;
     }
-    this.total = this.SelectedTotal - newArray.reduce(getSum) - this.totalDriverAdvance['amount'];
+    this.total = this.SelectedTotal - (newArray.reduce(getSum) + this.totalDriverAdvance['amount']);
     this.totalDeductions = newArray.reduce(getSum) + this.totalDriverAdvance['amount'];
     this.summaryArray = this.content.filter(el => el.deduction != null);
   }
   loggedInStaff;
+
+  driverTobeEdited = {};
+  editDriver(id){
+    this.driverTobeEdited = this.driverList.filter(el => el.id === id)[0];
+    window.localStorage.setItem('edit', id);
+    document.getElementById('myEdit2').style.display = "block"; 
+    document.getElementById('modalOne').style.display = "none"; 
+    document.getElementById('modalTwo').style.display = "block"; 
+  }
+  
+  submitDriverEdit(){
+   this.driverTobeEdited['toBeEdited'] = 'yes';
+   this.service.post(this.driverTobeEdited).subscribe(
+      data => {},()=> this.getData())
+      this.driverTobeEdited = {};
+      this.pop_close();
+  }
 
   ngOnInit() {
     this.loggedInStaff = JSON.parse(window.localStorage.getItem('loggedStaff'));

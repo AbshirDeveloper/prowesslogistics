@@ -45,6 +45,12 @@ export class ReportsComponent implements OnInit {
       element.total = totalBroker.reduce(this.getSum);
       return element;
     });
+    // if(!this.selectedDriverTransactions['numberOfLoads']){
+    // this.transaction.filter(el => el.owner_id === id && el.type === 'Billed').map(element => { 
+    //   this.selectedDriverTransactions['numberOfLoads'] = this.loads.filter(el => el.transaction_number === element.id).length;
+    //   }
+    //   );
+    // }
   }
 
   pop_close(){
@@ -96,15 +102,15 @@ export class ReportsComponent implements OnInit {
 
         this.allDriversSummary = this.drivers.map(driver => {
             driver.driverName = driver.name;
-            driver.totaLoads = this.loads.filter(load => load.driver_id == driver.id && load.settled === 'yes' && new Date(load.date_settled).getTime() > new Date(this.start).getTime() && new Date(load.date_settled).getTime() > new Date(this.end).getTime()).length;
+            driver.totaLoads = this.loads.filter(load => load.driver_id == driver.id && load.settled === 'yes' && new Date(load.date_settled).getTime() > new Date(this.start).getTime() && new Date(load.date_settled).getTime() < new Date(this.end).getTime()).length;
 
 
             var charge = [0]; 
-            this.loads.filter(load => load.driver_id == driver.id && load.settled === 'yes' && new Date(load.date_settled).getTime() > new Date(this.start).getTime() && new Date(load.date_settled).getTime() > new Date(this.end).getTime()).map(el => {
+            this.loads.filter(load => load.driver_id == driver.id && load.settled === 'yes' && new Date(load.date_settled).getTime() > new Date(this.start).getTime() && new Date(load.date_settled).getTime() < new Date(this.end).getTime()).map(el => {
               charge.push(+el.charge);
             })
             var exp = [0]
-            this.deduction.filter(deduction => deduction.driver_id == driver.id && deduction.type === 'driver settlement' && new Date(deduction.date).getTime() > new Date(this.start).getTime() && new Date(deduction.date).getTime() > new Date(this.end).getTime()).forEach(el => {
+            this.deduction.filter(deduction => deduction.driver_id == driver.id && deduction.type === 'driver settlement' && new Date(deduction.date).getTime() > new Date(this.start).getTime() && new Date(deduction.date).getTime() < new Date(this.end).getTime()).forEach(el => {
             exp.push(+el.amount);
             })
 
@@ -115,14 +121,14 @@ export class ReportsComponent implements OnInit {
 
             var netC = [0];
 
-            this.transaction.filter(transaction => transaction.owner_id == driver.id && new Date(transaction.date).getTime() > new Date(this.start).getTime() && new Date(transaction.date).getTime() > new Date(this.end).getTime()).forEach(el => {
+            this.transaction.filter(transaction => transaction.owner_id == driver.id && new Date(transaction.date).getTime() > new Date(this.start).getTime() && new Date(transaction.date).getTime() < new Date(this.end).getTime()).forEach(el => {
               this.loads.filter(element => element.transaction_number === el.id).map(el => {
                 netC.push(+el.net_profit);
               })
              });
 
             var generalDeduction = [0]; 
-            this.deduction.filter(deduction => deduction.driver_id === driver.id && deduction.type === 'Billed' && new Date(deduction.date).getTime() > new Date(this.start).getTime() && new Date(deduction.date).getTime() > new Date(this.end).getTime()).map(el => {
+            this.deduction.filter(deduction => deduction.driver_id === driver.id && deduction.type === 'Billed' && new Date(deduction.date).getTime() > new Date(this.start).getTime() && new Date(deduction.date).getTime() < new Date(this.end).getTime()).map(el => {
               generalDeduction.push(+el.amount);
             })
 
@@ -134,13 +140,15 @@ export class ReportsComponent implements OnInit {
             // driver.netPay = net.reduce(getSum);
             driver.deductions = generalDeduction.reduce(getSum);
             driver.final = netC.reduce(getSum);
+            driver.finals = (driver.totalCharge * .12) - (driver.deductions + (driver.totalCharge * .0295));
+
 
             return driver;
         });
 
         var totale = [0];
         this.allDriversSummary.map(el => {
-          totale.push(+el.final);
+          totale.push(+el.finals);
         })
     
         function getSum(total, num) {
@@ -182,7 +190,7 @@ export class ReportsComponent implements OnInit {
     total;
     loggedInStaff
     start = 0; 
-    end = 0;
+    end = '1 March, 2050';
     changeStart(){
       this.getData();
     }
