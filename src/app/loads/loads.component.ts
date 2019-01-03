@@ -48,6 +48,7 @@ export class LoadsComponent implements OnInit {
       load: this.selected_load
     }
   }
+  this.assignment['toAssign'] = 'yes';
     this.service.post(this.assignment).subscribe(
       data => {},()=> this.ngOnInit())
       this.pop_close();
@@ -85,7 +86,11 @@ export class LoadsComponent implements OnInit {
   getData(){
     this.service.get().subscribe(
       data => {
-        this.loads = data[2];
+        this.loads = data[2].map(el => {
+          el.pick = new Date(el.pick_up_date).getTime()
+          el.drop = new Date(el.delivery_time).getTime()
+          return el;
+        })
         this.drivers = data[0].filter(el => el.status === 'Active');
         this.carriers = data[3];
     }
@@ -117,6 +122,21 @@ export class LoadsComponent implements OnInit {
     this.itExists = load_exist.length > 0 ? true : false;
   }
 
+  loadTbeEdited = [];
+  editLoad(id){
+    this.loads.forEach(element => {
+      if(element.id === id){
+        this.selected_load = element;
+        this.pickup = new Date(element.pick_up_date).getTime();
+        this.dropp = new Date(element.delivery_time).getTime();
+      }
+    })
+    window.localStorage.setItem('edit', id);
+    document.getElementById('myEdit2').style.display = "block"; 
+    document.getElementById('modalTwo').style.display = "none"; 
+    document.getElementById('modalOne').style.display = "block"; 
+  }
+
   register_load(){
     if(this.itExists){
     alert('this load exists');
@@ -125,14 +145,29 @@ export class LoadsComponent implements OnInit {
     this.perMile || (this.load['miles'] = 'No Mile Given');
     this.load['total'] = this.total;
     if(this.load['delivery_time'] && new Date(this.load['delivery_time']).getTime() > new Date(this.load['pick_up_date']).getTime()){
-    this.service.post(this.load).subscribe(
+      this.load['toRegister'] = 'yes';
+      this.service.post(this.load).subscribe(
       data => {},()=> this.ngOnInit())
       this.load = {};
+      this.selected_load = {};
+      this.total = 0;
     } else {
       alert('please check the pick up and the drop dates');
       return false;
     }
   }
+  }
+
+  submitEditLoad(){
+    this.perMile || (this.selected_load['miles'] = 'No Mile Given');
+    this.selected_load['loadToEdit'] = 'yes';
+    this.selected_load['total'] = this.total;
+    this.service.post(this.selected_load).subscribe(
+      data => {},()=> this.getData())
+      this.selected_load = {};
+      this.load = {};
+      this.total = 0;
+      this.pop_close();
   }
   pickup;
   dropp;
@@ -153,6 +188,8 @@ export class LoadsComponent implements OnInit {
       )
     window.localStorage.setItem('edit', id);
     document.getElementById('myEdit2').style.display = "block"; 
+    document.getElementById('modalTwo').style.display = "block"; 
+    document.getElementById('modalOne').style.display = "none"; 
   }
 
   pop_close(){
@@ -166,9 +203,19 @@ export class LoadsComponent implements OnInit {
       this.total = (this.perMile ? +this.load['charge'] * +this.load['miles'] : +this.load['charge']);
   }
 
+  calculateForEdit(){
+    this.total = (this.perMile ? +this.selected_load['charge'] * +this.selected_load['miles'] : +this.selected_load['charge']);
+}
+
   perMile = false;
   loadWithTotalCharge;
 
+  milesForLoadEdit(a){
+    this.perMile = (a === 'Mile' ? true : false);
+    this.total = (a === 'Mile' ? +this.selected_load['charge'] * +this.selected_load['miles'] : +this.selected_load['charge']);
+    this.load['total'] = this.total;
+  }
+  
   miles(a){
     this.perMile = (a === 'Mile' ? true : false);
     this.total = (a === 'Mile' ? +this.load['charge'] * +this.load['miles'] : +this.load['charge']);

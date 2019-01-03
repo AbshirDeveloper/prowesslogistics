@@ -84,7 +84,7 @@ if(isset($data->broker_type)){
         "id_no"=>$data->id_no
 );
 $response = $public->insert($registration, $table);
-} else if( isset($data->charge)) {
+} else if( isset($data->toRegister)) {
     $table = 'loads';
     $registration = array(
         "billed"=>"Nope, Bill it now", 
@@ -247,7 +247,7 @@ $response = $public->insert($registration, $table);
 } else if (isset($data->staffDeleting)) {
     $query = "delete from staff where id = $data->id limit 1";
     $public->query($query);
-} else if(isset($data->driver)){
+} else if(isset($data->toAssign)){
     $loadUpdateQuery = "update loads set 
         driver = '{$data->driver->name}', 
         driver_id = '{$data->driver->id}', 
@@ -289,46 +289,36 @@ $public->query($loadUpdateQuery);
         where id = $data->id";
 
     $public->query($driverUpdate);  
-} else if (isset($data->loadToBeEdited)){
+} else if (isset($data->loadToEdit)){
+    $loadUpdate = "update loads set
+        miles = '{$data->miles}',
+        ref_id =  '{$data->ref_id}', 
+        eq_type = '{$data->eq_type}',
+        length = '{$data->length}', 
+        temp = '{$data->temp}', 
+        size = '{$data->size}',
+        commo = '{$data->commo}', 
+        weight = '{$data->weight}', 
+        notes = '{$data->notes}',
+        shipper = '{$data->shipper}', 
+        pick_up = '{$data->pick_up}',
+        pick_up_date = '{$data->pick_up_date}',
+        shipper_notes = '{$data->shipper_notes}',
+        contact = '{$data->contact}',
+        phone = '{$data->phone}',
+        receiver = '{$data->receiver}',
+        drop_off = '{$data->drop_off}', 
+        delivery_time = '{$data->delivery_time}',
+        instructions = '{$data->instructions}',
+        contact_person = '{$data->contact_person}',
+        contact_phone = '{$data->contact_phone}',
+        rate = '{$data->rate}',
+        charge = '{$data->total}'
+        where id = $data->id limit 1";
 
-    $loadUpdate = "update load set
-        truck_number = $data->truck_number,
-        trailer_number = $data->trailer_number,
-        miles = $data->miles,
-        status = $data->status,
-        ref_id =  $data->ref_id, 
-        eq_type = $data->eq_type,
-        length = $data->length, 
-        temp = $data->temp, 
-        size = $data->size,
-        commo = $data->commo, 
-        weight = $data->weight, 
-        notes = $data->notes,
-        shipper = $data->shipper, 
-        pick_up = $data->pick_up,
-        pick_up_date = $data->pick_up_date,
-        shipper_notes = $data->shipper_notes,
-        contact = $data->contact,
-        phone = $data->phone,
-        receiver = $data->receiver,
-        drop_off = $data->drop_off, 
-        delivery_time = $data->delivery_time,
-        instruction = $data->instructions,
-        contact_person = $data->contact_person,
-        contact_phone = $data->contact_phone,
-        rate = $data->rate,
-        charge = $data->total
-        where id = $data->id";
-
-        $public->query($loadUpdate); 
+        $response = $public->query($loadUpdate); 
+        echo json_encode($data);
 }
-// if(isset($data)){
-    
-// };
-
-// if(isset($data->owner_id)) {
-
-// }
 }
 ?>
 

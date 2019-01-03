@@ -128,6 +128,7 @@
                     <!-- <a style="color: black" class="btn btn-success">Dispatch Now</a>  -->
                     <i (click)="pops(x.id)" style="color: green; font-size:x-large" class="fa fa-truck" aria-hidden="true"></i> &nbsp;
                     <i (click)="setForDelete(x.id, 'loads')" style="color: red; font-size:x-large" class="fa fa-trash" aria-hidden="true"></i>
+                    <i (click)="editLoad(x.id)" style="color: chocolate; font-size:x-large" class="fa fa-edit" aria-hidden="true"></i>
                   </td>
                 </tr>
                 <tr *ngIf="x.assigned !== '0'">
@@ -140,6 +141,9 @@
                   <td *ngIf="x.pick < today && x.drop > today" data-title="Status">On The Way</td>
                   <td *ngIf="x.drop < today" data-title="Status">Delivered</td>
                   <td data-title="Status"><a (click)="pops(x.id)">View</a></td>
+                  <td>
+                      <i (click)="editLoad(x.id)" style="color: chocolate; font-size:x-large" class="fa fa-edit" aria-hidden="true"></i>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -148,7 +152,110 @@
   </div>
   <div id="myEdit2" class="modal" style="height: 100%;">
       <!-- Modal content -->
-      <div class="modal-content" style="height: 1000px;">
+      <div id="modalOne" class="modal-content" style="height: 1000px;">
+          <button style="float: right; color: red" (click)="pop_close()" class="close">&times;</button>
+          <div class="registers">
+              <h3>Edit Load</h3>
+              <span style="margin-left:45%; color: red">{{loadNumberError}}</span>
+            <form ngNativeValidate id="reg-form" (submit)="submitEditLoad()">
+                <div>
+                  <!-- <label for="name">Load Status</label>
+                  <select name="status" id="" [(ngModel)]="selected_load.status" required>
+                    <optgroup label="Planning">
+                        <option value="Needs Driver">Needs Driver</option>
+                      <option value="Needs Carrier">Needs Carrier</option>
+                      <option value="Waiting Confirmation">Waiting Confirmation</option>
+                    </optgroup>
+                    <option value="planning">Active Load</option>
+                  </select> -->
+                  <label for="ref_id">Load Ref ID</label>
+                  <input type="text" id="ref_id" spellcheck="false" placeholder="Load Ref ID" name="ref_id" [(ngModel)]="selected_load.ref_id" (change)="checkLoadNumber()" required/>
+                  <label for="eq_type">Equipment Type</label>
+                  <select name="eq_type" id="" name="eq_type" [(ngModel)]="selected_load.eq_type" required>
+                    <option value="Van">Van</option>
+                    <option value="Flat">Flat</option>
+                    <option value="Dubl">Dubl</option>
+                    <option value="Revr">Revr</option>
+                    <option value="Expd">Expd</option>
+                  </select>
+                  <label for="eq_length">Equipment Length</label>
+                  <input type="text" id="eq_length" placeholder="Equipment Length" name="length" [(ngModel)]="selected_load.length" required/>
+                  <label for="temprature">Temprature</label>
+                  <input type="text" id="temprature" placeholder="Temprature in F" name="temp" [(ngModel)]="selected_load.temp" required/>
+                  <label for="size">Load Size</label>
+                  <select name="size" id="" name="size" [(ngModel)]="selected_load.size" required>
+                    <option value="full">Full</option>
+                    <option value="half">Half</option>
+                  </select>
+                  <label for="commodity">Commodity</label>
+                  <select name="commodity" id="" name="commo" [(ngModel)]="selected_load.commo" required>
+                    <optgroup label="Dry">
+                      <option value="food">Food</option>
+                      <option value="general">General</option>
+                    </optgroup>
+                    <optgroup label="Hazardious">
+                      <option value="Chemicals">Chemicals</option>
+                    </optgroup>
+                  </select>
+                  <label for="weight">Weight</label>
+                  <input type="text" id="weight" placeholder="Load Weight" name="weight" [(ngModel)]="selected_load.weight" required/>
+                  <label for="notes">Notes/Description</label>
+                  <textarea name="notes" id="" cols="40" rows="2" name="notes" [(ngModel)]="selected_load.notes"></textarea>
+                  <div class="sep">
+                      <span class="or">Shipper</span>
+                  </div>
+                  <label for="shipper">Shipper</label>
+                  <input type="text" id="shipper" spellcheck="false" placeholder="Shipper" name="shipper" [(ngModel)]="selected_load.shipper" required/>
+                  <label for="pickup">Pick Up Location</label>
+                  <input type="text" id="pickup" spellcheck="false" placeholder="Pick Up Location" name="pick_up" [(ngModel)]="selected_load.pick_up" required/>
+                  <p id="pick_error" class="fa fa-warning" style="width: 100%; color: red; margin-left: 20%; display: none"> Pick up date should be greater than today</p>
+                  <label for="pickup_date">Pick Up Date & Time</label>
+                  <input type="datetime-local" id="pickup_date" name="pick_up_date" [(ngModel)]="selected_load.pick_up_date" (blur)="check_pickup()" required/>
+                  <label for="pickup_note">Notes</label>
+                  <textarea name="pickup_notes" id="" cols="40" rows="1" name="shipper_notes" [(ngModel)]="selected_load.shipper_notes"></textarea>
+                  <label for="contact_person">Contact Person</label>
+                  <input type="text" id="pickup_date" placeholder="Contact Person" name="contact" [(ngModel)]="selected_load.contact" required/>
+                  <label for="phone">Phone</label>
+                  <input type="tel" id="pickup_date" placeholder="Phone#" name="phone" [(ngModel)]="selected_load.phone" required/>
+                  <div class="sep">
+                      <span class="or">Receiver</span>
+                  </div>
+                  <label for="receiver">Reciever</label>
+                  <input type="text" id="receiver" spellcheck="false" placeholder="Receiver" name="receiver" [(ngModel)]="selected_load.receiver" required/>
+                  <label for="drop_off">Drop Off Location</label>
+                  <input type="text" id="drop_off" spellcheck="false" placeholder="Drop Off Location" name="drop_off" [(ngModel)]="selected_load.drop_off" required/>
+                  <p id="drop_error" class="fa fa-warning" style="width: 100%; color: red; margin-left: 20%; display: none"> Delivery date should be greater than pickup date</p>
+                  <label for="delivery_date">Deliver Date & Time</label>
+                  <input type="datetime-local" id="delivery_date" name="delivery_time" [(ngModel)]="selected_load.delivery_time" (blur)="check_delivery()" disabled={{disabled}} required/>
+                  <label for="instructions">Instructions</label>
+                  <textarea name="instructions" id="" cols="40" rows="1" name="instructions" [(ngModel)]="selected_load.instructions"></textarea>
+                  <label for="contact_person_delivery">Contact Person at Delivery</label>
+                  <input type="text" id="contact_person_delivery" placeholder="Contact Person at Delivery" name="contact_person" [(ngModel)]="selected_load.contact_person" required/>
+                  <label for="delivery_phone">Phone</label>
+                  <input type="tel" id="delivery_phone" placeholder="Phone#" name="contact_phone" [(ngModel)]="selected_load.contact_phone" required/>
+                  <div class="sep">
+                      <span class="or">Charges</span>
+                  </div>
+                  <label for="receiver">Rate</label>
+                  <select name="rate" id="" name="rate" [(ngModel)]="selected_load.rate" (change)="milesForLoadEdit(selected_load.rate)" required>
+                    <option value="Flat Fee">Flate Fee</option>
+                    <option value="Mile">Per Mile</option>
+                  </select>
+                  <label *ngIf="perMile" for="instructions"><i>Miles</i></label>
+                  <input *ngIf="perMile" type="text" name="miles" [(ngModel)]="selected_load.miles" required/>
+                  <label for="instructions"><i>$</i></label>
+                  <input type="text" name="charge" [(ngModel)]="selected_load.charge" (change)="calculateForEdit()" required/>
+                  <label style="color:seagreen; font-size: large;">${{total}}</label><br />
+                  <input style="float:right" type="submit" value="Save Changes" id="create-account" class="button" required/>
+                </div>
+            </form>
+          </div>
+
+      </div>
+
+
+
+      <div id="modalTwo" class="modal-content" style="height: 1000px;">
               <h2 *ngIf="selected_load.assigned === '0'">{{selected_load.status}}</h2>
               <h2 *ngIf="pickup > today && selected_load.assigned === '1'">Assigned</h2>
               <h2 *ngIf="pickup < today && dropp > today && selected_load.assigned === '1'">On The Way</h2>

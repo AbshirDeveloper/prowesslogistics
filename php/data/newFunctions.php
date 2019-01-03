@@ -61,7 +61,7 @@ class everything {
     public static function insert($array, $table_name){
         global $connection;
         $keys = "(" . join(", ", array_keys($array)). ")";
-        $values = "('" . join("', '", array_values($array)). "')";
+        $values = '("' . join('", "', array_values($array)). '")';
         $query = "insert into " . $table_name . " " . $keys . " values " . $values;
         $result = mysqli_query($connection, $query);
         return $result || false;

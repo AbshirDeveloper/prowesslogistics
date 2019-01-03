@@ -24,6 +24,9 @@ export class AppComponent {
     this.pages = false;
     this.router.navigate([''])
     window.localStorage.setItem('logged', 'false');
+    this.error = null
+    this.inactiveError = null;
+    this.resetSuccess = null;
   }
 
   info = {};
