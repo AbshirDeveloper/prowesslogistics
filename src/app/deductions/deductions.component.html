@@ -313,3 +313,30 @@
       </div>
       </div>
       </div>
+      <hr>
+      <div class="table-responsive-vertical shadow-z-1" style="width: 98%;">
+        <table id="table" class="table table-hover table-mc-light-blue">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Transaction #</th>
+                <th>Type</th>
+                <th>Total Deductions</th>
+                <th>Number of loads</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let x of transactions">
+                <td data-title="ID">{{x.date}}</td>
+                <td data-title="Name">{{x.id}}</td>
+                <td data-title="Link">{{x.type}}</td>
+                <td data-title="Link">{{x.total_deductions | currency}}</td>
+                <td data-title="Link">{{x.number_of_loads}}</td>
+                <td>
+                    <i (click)="deleteTransaction(x.id, x.type)" style="color: red; font-size:x-large" class="fa fa-trash" aria-hidden="true"></i>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>

@@ -93,9 +93,10 @@ export class AddressBookComponent implements OnInit {
     this.service.post(this.transactionRegisteration).subscribe(
       data => {},()=> this.getData())
       this.transactionRegisteration = {};
-      this.pop_close();
+      this.getData();
       this.summaryArray = [];
       this.total = 0;
+      this.ngOnInit();
   }
 
   getData(){
@@ -183,7 +184,7 @@ export class AddressBookComponent implements OnInit {
   confirmation
   setForDelet(id, table){
     this.confirmation = prompt("please enter you password to delete this "+table);
-      if(this.confirmation === '773'){
+      if(this.confirmation === '1632'){
         this.delete_object.table = table;
         this.delete_object.id = id;
         this.delete();

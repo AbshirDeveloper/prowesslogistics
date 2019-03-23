@@ -67,7 +67,7 @@ export class AccountsComponent implements OnInit {
             element.late = (this.today / (86400 * 1000)) - ((new Date(element.delivery_time).getTime()) / (86400 * 1000));
             return element;
           });
-        this.loads = data[2].map(el => {
+        this.loads = data[8].map(el => {
           el.epoch = new Date(el.delivery_time).getTime();
           return el;
         })

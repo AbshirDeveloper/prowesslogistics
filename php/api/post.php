@@ -142,7 +142,7 @@ $response = $public->insert($registration, $table);
     $response = $public->insert($registration, $table);
 
     if($data->selectedLoads) {
-        $returnedTransaction = $public->select("transactions", "where owner_id = $data->owner_id");
+        $returnedTransaction = $public->select("transactions", "where owner_id = $data->owner_id", '');
         $number = $returnedTransaction[0]['id'];
         $today = date('m/d/Y');
     foreach ($data->selectedLoads as $value) {
@@ -150,11 +150,11 @@ $response = $public->insert($registration, $table);
     $public->query($loadUpdateForTransaction);
     }
     } else if($data->selectedLoad){
-        $returnedTransaction = $public->select("transactions", "where owner_id = $data->owner_id");
+        $returnedTransaction = $public->select("transactions", "where owner_id = $data->owner_id", '');
         $number = $returnedTransaction[0]['id'];
         $today = date('m/d/Y');
         foreach ($data->selectedLoad as $value) {
-        $loadUpdateForTransaction = "update loads set billed = 'Yup', billed_date = '{$today}', net_profit = {$value->netProfit} where id = '{$value->id}'";
+        $loadUpdateForTransaction = "update loads set billed = 'Yup', billed_date = '{$today}', net_profit = {$value->netProfit}, transaction_number_billed = {$number} where id = '{$value->id}'";
         $public->query($loadUpdateForTransaction);  
         }
     }
@@ -177,10 +177,10 @@ $response = $public->insert($registration, $table);
 
 } else if (isset($data->toA)) {
     if($data->toA === 'Driver'){
-    $returnedTransaction = $public->select("driver", "where id = $data->id");
+    $returnedTransaction = $public->select("driver", "where id = $data->id", '');
     $name = $returnedTransaction[0]['name'];
     } else {
-    $returnedTransaction = $public->select("dispatcher", "where id = $data->id");
+    $returnedTransaction = $public->select("dispatcher", "where id = $data->id", '');
     $name = $returnedTransaction[0]['contact_name'];   
     }
     $table = 'advance';
@@ -285,7 +285,7 @@ $public->query($loadUpdateQuery);
         insurance_company = '{$data->insurance_company}',
         insurance_expiration_date = '{$data->insurance_expiration_date}',
         group_no = '{$data->group_no}',
-        id_no = $data->id_no
+        id_no = '{$data->id_no}'
         where id = $data->id";
 
     $public->query($driverUpdate);  
@@ -318,6 +318,24 @@ $public->query($loadUpdateQuery);
 
         $response = $public->query($loadUpdate); 
         echo json_encode($data);
+} else if(isset($data->forTranDelete)){
+    $deleteOne = "delete from deductions where transaction_number = $data->id";
+    $deleteTwo = "delete from transactions where id = $data->id";
+    if($data->type === 'Billed'){
+        $edit = "update loads set 
+        billed = 'Nope, Bill it now', 
+        net_profit = NULL, 
+        billed_date = NULL
+        where transaction_number_billed=$data->id";
+    } else {
+        $edit = "update loads set 
+        settled = '', 
+        date_settled='NULL' 
+        where transaction_number=$data->id";
+    }
+    $public->query($edit); 
+    $public->query($deleteOne); 
+    $public->query($deleteTwo); 
 }
 }
 ?>

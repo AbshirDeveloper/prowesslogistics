@@ -67,10 +67,10 @@ class everything {
         return $result || false;
     }
 
-    public static function select($table_name, $where){
+    public static function select($table_name, $where, $order){
         $data = array();
         global $connection;
-        $query = "select * from {$table_name} {$where} order by id desc";
+        $query = "select * from {$table_name} {$where} {$order}";
         $result = mysqli_query($connection, $query);
         if($result){
             while($array = mysqli_fetch_array($result)){

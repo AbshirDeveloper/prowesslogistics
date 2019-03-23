@@ -184,7 +184,7 @@
               <td data-title="Status">{{x.trailer_number}}</td>
               <td *ngIf="loggedInStaff.deletion === '1'" data-title="Status" style="color: blue; font-weight: bold; font-size: 20px">
                 &nbsp;
-                <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i> &nbsp;
+                <!-- <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i> &nbsp; -->
                 <i (click)="editDriver(x.id)" style="color: chocolate" class="fa fa-edit" aria-hidden="true"></i>
               </td>
             </tr>
@@ -198,7 +198,7 @@
                 <td data-title="Status">{{x.trailer_number}}</td>
                 <td *ngIf="loggedInStaff.deletion === '1'" data-title="Status" style="color: blue; font-weight: bold; font-size: 20px">
                   &nbsp;
-                  <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i> &nbsp;
+                  <!-- <i (click)="setForDelet(x.id, 'driver')" style="color: red" class="fa fa-trash" aria-hidden="true"></i> &nbsp; -->
                   <i (click)="editDriver(x.id)" style="color: chocolate" class="fa fa-edit" aria-hidden="true"></i>
                 </td>
               </tr>

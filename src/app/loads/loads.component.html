@@ -78,7 +78,7 @@
             <input type="text" id="drop_off" spellcheck="false" placeholder="Drop Off Location" name="drop_off" [(ngModel)]="load.drop_off" required/>
             <p id="drop_error" class="fa fa-warning" style="width: 100%; color: red; margin-left: 20%; display: none"> Delivery date should be greater than pickup date</p>
             <label for="delivery_date">Deliver Date & Time</label>
-            <input type="datetime-local" id="delivery_date" name="delivery_time" [(ngModel)]="load.delivery_time" (blur)="check_delivery()" disabled={{disabled}} required/>
+            <input type="datetime-local" id="delivery_date" name="delivery_time" [(ngModel)]="load.delivery_time" (blur)="check_delivery()" required/>
             <label for="instructions">Instructions</label>
             <textarea name="instructions" id="" cols="40" rows="1" name="instructions" [(ngModel)]="load.instructions"></textarea>
             <label for="contact_person_delivery">Contact Person at Delivery</label>
@@ -124,6 +124,7 @@
                   <td data-title="Status">{{x.driver | titlecase}}</td>
                   <td data-title="Status">{{x.truck_number}}</td>
                   <td data-title="Status">{{x.status}}</td>
+                  <td data-title="Status"></td>
                   <td *ngIf="loggedInStaff.dispatching === '1'" data-title="Status">
                     <!-- <a style="color: black" class="btn btn-success">Dispatch Now</a>  -->
                     <i (click)="pops(x.id)" style="color: green; font-size:x-large" class="fa fa-truck" aria-hidden="true"></i> &nbsp;
@@ -133,8 +134,8 @@
                 </tr>
                 <tr *ngIf="x.assigned !== '0'">
                   <td data-title="ID">{{x.ref_id}}</td>
-                  <td data-title="Name">{{x.pick_up}}<span style="display:block">{{x.pick_up_date | date:'medium'}}</span></td>
-                  <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time | date:'medium'}}</span></td>
+                  <td data-title="Name">{{x.pick_up}}<span style="display:block">{{x.pick_up_date}}</span></td>
+                  <td data-title="Link">{{x.drop_off}}<span style="display:block">{{x.delivery_time}}</span></td>
                   <td data-title="Status">{{x.driver | titlecase}}</td>
                   <td data-title="Status">{{x.truck_number}}</td>
                   <td *ngIf="x.pick > today" data-title="Status">Assigned</td>
@@ -226,7 +227,7 @@
                   <input type="text" id="drop_off" spellcheck="false" placeholder="Drop Off Location" name="drop_off" [(ngModel)]="selected_load.drop_off" required/>
                   <p id="drop_error" class="fa fa-warning" style="width: 100%; color: red; margin-left: 20%; display: none"> Delivery date should be greater than pickup date</p>
                   <label for="delivery_date">Deliver Date & Time</label>
-                  <input type="datetime-local" id="delivery_date" name="delivery_time" [(ngModel)]="selected_load.delivery_time" (blur)="check_delivery()" disabled={{disabled}} required/>
+                  <input type="datetime-local" id="delivery_date" name="delivery_time" [(ngModel)]="selected_load.delivery_time" (blur)="check_delivery()" required/>
                   <label for="instructions">Instructions</label>
                   <textarea name="instructions" id="" cols="40" rows="1" name="instructions" [(ngModel)]="selected_load.instructions"></textarea>
                   <label for="contact_person_delivery">Contact Person at Delivery</label>
@@ -433,7 +434,7 @@
                           <th>Phone#: </th>
                           <td>{{selected_carrier.phone}}</td>
                       </tr>  
-                      <button class="btn btn-success" (click)="assign()">Assign</button>
+                      <button *ngIf="selected_carrier.company_name" class="btn btn-success" (click)="assign()">Assign</button>
                   </table>
                   </div>
                   <table *ngIf="selected_load.status === 'On the Way' || selected_load.status === 'Delivered' || selected_load.status === 'Assigned'" id="tables" style="width: 50%; float:left;" class="table table-hover table-mc-light-blue">
@@ -493,7 +494,7 @@
                         <th>Trailer #: </th>
                         <td>{{selected_driver.trailer_number}}</td>
                     </tr>  
-                    <button class="btn btn-success" (click)="assign()">Assign</button>
+                    <button *ngIf="selected_driver.name" class="btn btn-success" (click)="assign()">Assign</button>
                 </table>
                 </div>
                 <table *ngIf="selected_load.assigned !== '0' && selected_load.driver !== 'Not assigned'" id="tables" style="width: 50%; float:left;" class="table table-hover table-mc-light-blue">

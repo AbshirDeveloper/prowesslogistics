@@ -1,15 +1,27 @@
 <div class="container" style="width: 100%;">
-    <mat-form-field>
-        <input matInput [matDatepicker]="picker" placeholder="Start Date" [(ngModel)]="start" (dateInput)="changeStart()">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-    <mat-form-field style="margin-left: 5%">
-        <input matInput [matDatepicker]="pickers" placeholder="End Date" [(ngModel)]="end" (dateInput)="changeEnd()">
-        <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
-        <mat-datepicker #pickers></mat-datepicker>
-    </mat-form-field>
-    <!-- <div style="margin-top: 4%">
+  <mat-form-field>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      placeholder="Start Date"
+      [(ngModel)]="start"
+      (dateInput)="changeStart()"
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field style="margin-left: 5%">
+    <input
+      matInput
+      [matDatepicker]="pickers"
+      placeholder="End Date"
+      [(ngModel)]="end"
+      (dateInput)="changeEnd()"
+    />
+    <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+    <mat-datepicker #pickers></mat-datepicker>
+  </mat-form-field>
+  <!-- <div style="margin-top: 4%">
         <ul class="nav nav-tabs">
             <li class={{overall_class}}><a (click)="switch()">Overall</a></li>
             <li class={{driver_class}}><a (click)="switch()">Drivers</a></li>
@@ -43,68 +55,85 @@
                   (chartClick)="chartClicked($event)"></canvas>
       </div>
       <br /> -->
-      <!-- <div style="float: right;"> -->
-          <!-- <a href="#"><i class="fa fa-file-excel-o" style="font-size:48px;color:green"></i></a> &nbsp; -->
-          <!-- <a href="#"><i class="fa fa-file-pdf-o" style="font-size:48px;color:red"></i></a> -->
-      <!-- </div> -->
-<button class="collapsible">More Info</button>
-<div class="register">
-  <h2 style="float: right; margin-right: 0px">{{total | currency}}</h2>
-  <table class="rwd-table" style="margin-top: 1%; width: 100%">
-    <tr>
-      <th>Driver</th>
-      <th>Total Loads</th>
-      <th>Broker Amount</th>
-      <th>Driver 88%</th>
-      <th>D. Deductions</th>
-      <th>Driver Net Pay</th>
-      <th>C. Deductions</th>
-      <th>Final</th>
-    </tr>
-    <tr *ngFor="let x of allDriversSummary">
-      <td data-th="Movie Title"><a (click)="pops(x.id)">{{x.driverName}}</a></td>
-      <td data-th="Genre">{{x.totaLoads}}</td>
-      <td data-th="Year">{{x.totalCharge | currency }}</td>
-      <td data-th="Year">{{x.totalCharge * .88 | currency }}</td>
-      <td data-th="Gross">{{x.expenses | currency }}</td>
-      <td data-th="Year">{{x.totalCharge * .88 - x.expenses | currency }}</td>
-      <td data-th="Year">{{x.deductions + (x.totalCharge * .0295) | currency }}</td>
-      <td data-th="Gross">{{x.finals | currency }}</td>
-    </tr>
-  </table>
-</div>
-      <!-- <script src="node_modules/chart.js/src/chart.js"></script> -->
+  <!-- <div style="float: right;"> -->
+  <!-- <a href="#"><i class="fa fa-file-excel-o" style="font-size:48px;color:green"></i></a> &nbsp; -->
+  <!-- <a href="#"><i class="fa fa-file-pdf-o" style="font-size:48px;color:red"></i></a> -->
+  <!-- </div> -->
+  <button class="collapsible">More Info</button>
+  <div class="register">
+    <h2 style="float: right; margin-right: 0px">{{ total | currency }}</h2>
+    <table class="rwd-table" style="margin-top: 1%; width: 100%">
+      <tr>
+        <th>Driver</th>
+        <th>Total Loads</th>
+        <th>Broker Amount</th>
+        <th>Driver 88%</th>
+        <th>D. Deductions</th>
+        <th>Driver Net Pay</th>
+        <th>C. Deductions</th>
+        <th>Final</th>
+      </tr>
+      <tr *ngFor="let x of allDriversSummary">
+        <td data-th="Movie Title">
+          <a (click)="pops(x.id)">{{ x.driverName }}</a>
+        </td>
+        <td data-th="Genre">{{ x.totaLoads }}</td>
+        <td data-th="Year">{{ x.totalCharge | currency }}</td>
+        <td data-th="Year">{{ x.totalCharge * 0.88 | currency }}</td>
+        <td data-th="Gross">{{ x.expenses | currency }}</td>
+        <td data-th="Year">
+          {{ x.totalCharge * 0.88 - x.expenses | currency }}
+        </td>
+        <td data-th="Year">
+          {{ x.deductions + x.totalCharge * 0.0295 | currency }}
+        </td>
+        <td data-th="Gross">{{ x.finals | currency }}</td>
+      </tr>
+    </table>
+  </div>
+  <!-- <script src="node_modules/chart.js/src/chart.js"></script> -->
 </div>
 <div id="myEdit2" class="modal">
   <!-- Modal content -->
   <div class="modal-content">
-      <button (click)="pop_close()" class="close">&times;</button> <br/><br>
-      <h2><span style="color: blue;">{{selectedDriver.name}}</span> | {{selectedDriver.phone}}</h2>
+    <button (click)="pop_close()" class="close">&times;</button> <br /><br />
+    <h2>
+      <span style="color: blue;">{{ selectedDriver.name }}</span> |
+      {{ selectedDriver.phone }}
+    </h2>
     <div class="table-responsive-vertical shadow-z-1">
-          <table id="table" class="table table-hover table-mc-light-blue">
-              <thead>
-                <tr>
-                  <th>Settlement Date</th>
-                  <th>Transaction #</th>
-                  <th>Number of Loads</th>
-                  <th>Broker Amount</th>
-                  <th>Driver 88%</th>
-                  <th>Driver Deductions</th>
-                  <th>Driver Paid</th>
-                </tr>
-              </thead>
-              <tbody *ngFor="let x of selectedDriverTransactions | filterDateStart: start | filterDateEnd: end">
-                <tr>
-                  <td data-title="ID">{{x.date}}</td>
-                  <td data-title="Status">{{x.id}}</td>
-                  <td data-title="Name">{{x.numberOfLoads}}</td>
-                  <td data-title="Link">{{x.total | currency }}</td>
-                  <td data-title="Link">{{x.total * .88 | currency }}</td>
-                  <td data-title="Status">{{x.total_deductions | currency }}</td>
-                  <td data-title="Status">{{x.amount | currency }}</td>
-                </tr>
-              </tbody>
-            </table>
-      </div>
+      <table id="table" class="table table-hover table-mc-light-blue">
+        <thead>
+          <tr>
+            <th>Settlement Date</th>
+            <th>Transaction #</th>
+            <th>Number of Loads</th>
+            <th>Broker Amount</th>
+            <th>Driver 88%</th>
+            <th>Driver Deductions</th>
+            <th>Driver Paid</th>
+          </tr>
+        </thead>
+        <tbody
+          *ngFor="
+            let x of (selectedDriverTransactions
+              | filterDateStart: start
+              | filterDateEnd: end)
+          "
+        >
+          <tr>
+            <td data-title="ID">{{ x.date }}</td>
+            <td data-title="Status">{{ x.id }}</td>
+            <td data-title="Name">{{ x.number_of_loads }}</td>
+            <td data-title="Link">{{ x.amount | currency }}</td>
+            <td data-title="Link">{{ x.amount * 0.88 | currency }}</td>
+            <td data-title="Status">{{ 0 | currency }}</td>
+            <td data-title="Status">
+              {{ x.amount * 0.88 | currency }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
